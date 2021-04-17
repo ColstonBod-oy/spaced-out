@@ -33,6 +33,28 @@ public class GameView {
     
     private static final int GAME_WIDTH = 1024;
     private static final int GAME_HEIGHT = 768;
+    private final Image[] SHIP_SPRITE_IMAGES = {
+        new Image("view/assets/sprites/sprite_ship0.png"),
+        new Image("view/assets/sprites/sprite_ship1.png")
+    };
+    private final Image[] ASTEROID_SPRITE_IMAGES = {
+        new Image("view/assets/sprites/sprite_asteroid0.png"),
+        new Image("view/assets/sprites/sprite_asteroid1.png"),
+        new Image("view/assets/sprites/sprite_asteroid2.png"),
+        new Image("view/assets/sprites/sprite_asteroid3.png")
+    };
+    private final Image[] BLUE_STAR_SPRITE_IMAGES = {
+        new Image("view/assets/sprites/sprite_blue_star0.png"),
+        new Image("view/assets/sprites/sprite_blue_star1.png"),
+        new Image("view/assets/sprites/sprite_blue_star2.png"),
+        new Image("view/assets/sprites/sprite_blue_star3.png")
+    };
+    private final Image[] WHITE_STAR_SPRITE_IMAGES = {
+        new Image("view/assets/sprites/sprite_white_star0.png"),
+        new Image("view/assets/sprites/sprite_white_star1.png"),
+        new Image("view/assets/sprites/sprite_white_star2.png"),
+        new Image("view/assets/sprites/sprite_white_star3.png")
+    };
     private AnchorPane root;
     private Scene gameScene;
     private Stage gameStage;
@@ -45,7 +67,6 @@ public class GameView {
     private boolean isSKeyPressed;
     private boolean isDKeyPressed;
     private boolean isFKeyPressed;
-    private Image[] shipSpriteImages;
     private ImageView ship;
     private int shipAngle;
     private Stage menuStage;
@@ -118,17 +139,13 @@ public class GameView {
     }
     
     private void createShip() {
-        shipSpriteImages = new Image[2];
-        shipSpriteImages[0] = new Image("view/assets/sprites/sprite_ship0.png");
-        shipSpriteImages[1] = new Image("view/assets/sprites/sprite_ship1.png");
-        
-        ship = new ImageView(shipSpriteImages[0]);
+        ship = new ImageView(SHIP_SPRITE_IMAGES[0]);
         gameTimeline = new Timeline();
         frames = gameTimeline.getKeyFrames();
         frameTime = Duration.ZERO;
         frameGap = Duration.millis(25);
         
-        for (Image img : shipSpriteImages) {
+        for (Image img : SHIP_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
             frames.add(new KeyFrame(frameTime, e -> ship.setImage(img)));
         }
