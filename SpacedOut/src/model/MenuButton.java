@@ -22,10 +22,10 @@ import javafx.scene.text.Font;
  */
 public class MenuButton extends Button {
     
-    private final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
-    private final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/green_button05.png');";
-    private final String BUTTON_RELEASED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/green_button04.png');";
-    private final String BUTTON_DEFAULT_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/yellow_button04.png');";
+    private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/green_button05.png');";
+    private static final String BUTTON_RELEASED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/green_button04.png');";
+    private static final String BUTTON_DEFAULT_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/yellow_button04.png');";
     private boolean isActive;
     private boolean isPressed;
     

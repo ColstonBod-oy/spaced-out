@@ -6,6 +6,7 @@
 package view;
 
 import java.util.Collection;
+import java.util.Random;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -33,23 +34,23 @@ public class GameView {
     
     private static final int GAME_WIDTH = 1024;
     private static final int GAME_HEIGHT = 768;
-    private final Image[] SHIP_SPRITE_IMAGES = {
+    private static final Image[] SHIP_SPRITE_IMAGES = {
         new Image("view/assets/sprites/sprite_ship0.png"),
         new Image("view/assets/sprites/sprite_ship1.png")
     };
-    private final Image[] ASTEROID_SPRITE_IMAGES = {
+    private static final Image[] ASTEROID_SPRITE_IMAGES = {
         new Image("view/assets/sprites/sprite_asteroid0.png"),
         new Image("view/assets/sprites/sprite_asteroid1.png"),
         new Image("view/assets/sprites/sprite_asteroid2.png"),
         new Image("view/assets/sprites/sprite_asteroid3.png")
     };
-    private final Image[] BLUE_STAR_SPRITE_IMAGES = {
+    private static final Image[] BLUE_STAR_SPRITE_IMAGES = {
         new Image("view/assets/sprites/sprite_blue_star0.png"),
         new Image("view/assets/sprites/sprite_blue_star1.png"),
         new Image("view/assets/sprites/sprite_blue_star2.png"),
         new Image("view/assets/sprites/sprite_blue_star3.png")
     };
-    private final Image[] WHITE_STAR_SPRITE_IMAGES = {
+    private static final Image[] WHITE_STAR_SPRITE_IMAGES = {
         new Image("view/assets/sprites/sprite_white_star0.png"),
         new Image("view/assets/sprites/sprite_white_star1.png"),
         new Image("view/assets/sprites/sprite_white_star2.png"),
@@ -60,6 +61,7 @@ public class GameView {
     private Stage gameStage;
     private Timeline gameTimeline;
     private AnimationTimer gameAnimationTimer;
+    private Random gameRandom;
     private Collection<KeyFrame> frames;
     private Duration frameTime;
     private Duration frameGap;
@@ -68,11 +70,13 @@ public class GameView {
     private boolean isDKeyPressed;
     private boolean isFKeyPressed;
     private ImageView ship;
+    private ImageView[] asteroids;
     private int shipAngle;
     private Stage menuStage;
     private int chosenLevel;
     
     public GameView() {
+        gameRandom = new Random();
         initStage();
         initKeyListeners();
     }
@@ -135,7 +139,42 @@ public class GameView {
         this.menuStage.hide();
         gameStage.show();
         createShip();
+        createGameElements();
         createGameLoop();
+    }
+    
+    private void createGameElements() {
+        createAsteroids();
+    }
+    
+    private void createAsteroids() {
+        asteroids = new ImageView[3];
+        
+        for (int i = 0; i < asteroids.length; i++) {
+            asteroids[i] = new ImageView(ASTEROID_SPRITE_IMAGES[gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length)]);
+            generateRandomPosition(asteroids[i]);
+            root.getChildren().add(asteroids[i]);
+        }
+    }
+    
+    private void generateAsteroids() {
+        for (int i = 0; i < asteroids.length; i++) {
+            if (asteroids[i].getLayoutY() > 768) {
+                asteroids[i] = new ImageView(ASTEROID_SPRITE_IMAGES[gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length)]);
+                generateRandomPosition(asteroids[i]);
+                root.getChildren().add(asteroids[i]);
+            }
+            
+            else {
+                asteroids[i].setLayoutY(asteroids[i].getLayoutY() + 7);
+                asteroids[i].setRotate(asteroids[i].getRotate() + 4);
+            }
+        }
+    }
+    
+    private void generateRandomPosition(ImageView image) {
+        image.setLayoutX(gameRandom.nextInt(949));
+        image.setLayoutY(- (gameRandom.nextInt(3200) + 600));
     }
     
     private void createShip() {
@@ -163,6 +202,7 @@ public class GameView {
             @Override
             public void handle(long l) {
                 moveShip();
+                generateAsteroids();
             }
         };
         
@@ -252,6 +292,10 @@ public class GameView {
             }
             
             ship.setRotate(shipAngle);
+            
+            if (ship.getLayoutY() < 648) {
+                ship.setLayoutY(ship.getLayoutY() + 2);
+            }
         }
     }
     

@@ -21,9 +21,9 @@ import javafx.util.Duration;
  */
 public class MenuSubScene extends SubScene {
     
-    private final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
-    private final String BACKGROUND_IMAGE = "/model/assets/green_panel.png";
-    private final AnchorPane root;
+    private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String BACKGROUND_IMAGE = "/model/assets/green_panel.png";
+    private AnchorPane root;
     private boolean isHidden;
     
     public MenuSubScene() {

@@ -23,8 +23,8 @@ import javafx.scene.text.Font;
  */
 public class MenuLabel extends Label {
     
-    private final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
-    private final String BACKGROUND_IMAGE = "/view/assets/green_button13.png";
+    private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String BACKGROUND_IMAGE = "/view/assets/green_button13.png";
     
     public MenuLabel(String text) {
         setPrefWidth(380);

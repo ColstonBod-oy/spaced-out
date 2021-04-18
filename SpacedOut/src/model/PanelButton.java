@@ -21,10 +21,10 @@ import javafx.scene.text.TextAlignment;
  */
 public class PanelButton extends Button {
     
-    private final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
-    private final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button12.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
-    private final String BUTTON_RELEASED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button11.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
-    private final String BUTTON_DEFAULT_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/yellow_button11.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
+    private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button12.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
+    private static final String BUTTON_RELEASED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button11.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
+    private static final String BUTTON_DEFAULT_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/yellow_button11.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
     private boolean isPressed;
     
     public PanelButton(String text) {
