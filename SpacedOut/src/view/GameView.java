@@ -7,6 +7,7 @@ package view;
 
 import java.util.Collection;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -62,8 +63,10 @@ public class GameView {
         new Image("view/assets/sprites/sprite_explosion2.png"),
         new Image("view/assets/sprites/sprite_explosion3.png")
     };
+    
+    // {Radius, half-width, half-height, damage}
+    private static final double[][] ASTEROID_SPRITE_VALUES = { {32.5, 37.5, 32.5, 10}, {15, 15, 15, 3}, {10, 10, 12.5, 2}, {10, 10, 10, 1} };
     private static final double SHIP_SPRITE_RADIUS = 37.5;
-    private static final double[][] ASTEROID_SPRITE_VALUES = { {32.5, 37.5, 32.5, 5}, {15, 15, 15, 4}, {10, 10, 12.5, 3}, {10, 10, 10, 2} };
     private AnchorPane root;
     private Scene gameScene;
     private Stage gameStage;
@@ -82,46 +85,26 @@ public class GameView {
     private boolean isDKeyPressed;
     private boolean isFKeyPressed;
     private ImageView ship;
-    private ImageView[] asteroids;
-    private double[][] asteroidsValues;
-    private ImageView[] stars = {
-        new ImageView(BLUE_STAR_SPRITE_IMAGES[0]),
-        new ImageView(WHITE_STAR_SPRITE_IMAGES[0])
-    };
-    private ImageView[] starsCopy1 = {
-        new ImageView(BLUE_STAR_SPRITE_IMAGES[0]),
-        new ImageView(WHITE_STAR_SPRITE_IMAGES[0])
-    };
-    private ImageView[] starsCopy2 = {
-        new ImageView(BLUE_STAR_SPRITE_IMAGES[0]),
-        new ImageView(WHITE_STAR_SPRITE_IMAGES[0])
-    };
-    private ImageView[] starsCopy3 = {
-        new ImageView(BLUE_STAR_SPRITE_IMAGES[0]),
-        new ImageView(WHITE_STAR_SPRITE_IMAGES[0])
-    };
-    private ImageView[] starsCopy4 = {
-        new ImageView(BLUE_STAR_SPRITE_IMAGES[0]),
-        new ImageView(WHITE_STAR_SPRITE_IMAGES[0])
-    };
-    private ImageView[] starsCopy5 = {
-        new ImageView(BLUE_STAR_SPRITE_IMAGES[0]),
-        new ImageView(WHITE_STAR_SPRITE_IMAGES[0])
-    };
-    private ImageView[] explosions = {
-        new ImageView(EXPLOSION_SPRITE_IMAGES[0]),
-        new ImageView(EXPLOSION_SPRITE_IMAGES[0]),
-        new ImageView(EXPLOSION_SPRITE_IMAGES[0]),
-        new ImageView(EXPLOSION_SPRITE_IMAGES[0])
-    };
+    private ImageView[] asteroidsLeft;
+    private ImageView[] asteroidsLeftEdge;
+    private ImageView[] asteroidsMiddle;
+    private ImageView[] asteroidsRight;
+    private ImageView[] asteroidsRightEdge;
+    private double[][] asteroidsLeftValues;
+    private double[][] asteroidsLeftEdgeValues;
+    private double[][] asteroidsMiddleValues;
+    private double[][] asteroidsRightValues;
+    private double[][] asteroidsRightEdgeValues;
+    private ImageView[][] stars;
+    private ImageView[] explosions;
     private int shipAngle;
     private int asteroidsRandom;
-    private int starsRandom;
-    private int starsCopy1Random;
-    private int starsCopy2Random;
-    private int starsCopy3Random;
-    private int starsCopy4Random;
-    private int starsCopy5Random;
+    private int asteroidsLeftGap;
+    private int asteroidsLeftEdgeGap;
+    private int asteroidsRightGap;
+    private int asteroidsRightEdgeGap;
+    private int asteroidsRotationRandom;
+    private int[] starsRandom;
     private int life;
     private int distanceTraveled;
     private Stage menuStage;
@@ -210,59 +193,22 @@ public class GameView {
     }
     
     private void createStars() {
-        stars[0].setLayoutY(-35);
-        root.getChildren().add(stars[0]);
+        stars = new ImageView[20][2];
+        starsRandom = new int[20];
         
-        stars[1].setLayoutY(-35);
-        root.getChildren().add(stars[1]);
-        
-        starsCopy1[0].setLayoutY(-35);
-        root.getChildren().add(starsCopy1[0]);
-        
-        starsCopy1[1].setLayoutY(-35);
-        root.getChildren().add(starsCopy1[1]);
-        
-        starsCopy2[0].setLayoutY(-35);
-        root.getChildren().add(starsCopy2[0]);
-        
-        starsCopy2[1].setLayoutY(-35);
-        root.getChildren().add(starsCopy2[1]);
-        
-        starsCopy3[0].setLayoutY(-35);
-        root.getChildren().add(starsCopy3[0]);
-        
-        starsCopy3[1].setLayoutY(-35);
-        root.getChildren().add(starsCopy3[1]);
-        
-        starsCopy4[0].setLayoutY(-35);
-        root.getChildren().add(starsCopy4[0]);
-        
-        starsCopy4[1].setLayoutY(-35);
-        root.getChildren().add(starsCopy4[1]);
-        
-        starsCopy5[0].setLayoutY(-35);
-        root.getChildren().add(starsCopy5[0]);
-        
-        starsCopy5[1].setLayoutY(-35);
-        root.getChildren().add(starsCopy5[1]);
-        
-        starsRandom = gameRandom.nextInt(stars.length);
-        generateStarsPosition(stars[starsRandom]);
-        
-        starsCopy1Random = gameRandom.nextInt(starsCopy1.length);
-        generateStarsPosition(starsCopy1[starsCopy1Random]);
-        
-        starsCopy2Random = gameRandom.nextInt(starsCopy2.length);
-        generateStarsPosition(starsCopy2[starsCopy2Random]);
-        
-        starsCopy3Random = gameRandom.nextInt(starsCopy3.length);
-        generateStarsPosition(starsCopy3[starsCopy3Random]);
-        
-        starsCopy4Random = gameRandom.nextInt(starsCopy4.length);
-        generateStarsPosition(starsCopy4[starsCopy4Random]);
-        
-        starsCopy5Random = gameRandom.nextInt(starsCopy5.length);
-        generateStarsPosition(starsCopy5[starsCopy5Random]);
+        for (int i = 0; i < stars.length; i++) {
+            stars[i][0] = new ImageView(BLUE_STAR_SPRITE_IMAGES[0]);
+            stars[i][0].setLayoutY(-35);
+            root.getChildren().add(stars[i][0]);
+            
+            stars[i][1] = new ImageView(WHITE_STAR_SPRITE_IMAGES[0]);
+            stars[i][1].setLayoutY(-35);
+            root.getChildren().add(stars[i][1]);
+            
+            starsRandom[i] = gameRandom.nextInt(stars[i].length);
+            stars[i][starsRandom[i]].setLayoutX(gameRandom.nextInt(990));
+            stars[i][starsRandom[i]].setLayoutY(gameRandom.nextInt(769) - 35);
+        }
     }
     
     private void createShip() {
@@ -272,111 +218,303 @@ public class GameView {
     }
     
     private void createAsteroids() {
-        asteroids = new ImageView[3];
-        asteroidsValues = new double[3][4];
+        asteroidsLeft = new ImageView[10];
+        asteroidsLeftValues = new double[10][5];
+        asteroidsLeftEdge = new ImageView[10];
+        asteroidsLeftEdgeValues = new double[10][5];
+        asteroidsMiddle = new ImageView[10];
+        asteroidsMiddleValues = new double[10][5];
+        asteroidsRight = new ImageView[10];
+        asteroidsRightValues = new double[10][5];
+        asteroidsRightEdge = new ImageView[10];
+        asteroidsRightEdgeValues = new double[10][5];
+        asteroidsLeftGap = -704;
+        asteroidsLeftEdgeGap = -748;
+        asteroidsRightGap = -704;
+        asteroidsRightEdgeGap = -748;
         
-        for (int i = 0; i < asteroids.length; i++) {
+        for (int i = 0; i < asteroidsLeft.length; i++) {
             asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
-            asteroids[i] = new ImageView(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
-            asteroidsValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
-            asteroidsValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
-            asteroidsValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
-            asteroidsValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
-            generateAsteroidsPosition(asteroids[i]);
-            root.getChildren().add(asteroids[i]);
+            asteroidsRotationRandom = gameRandom.nextInt(2);
+            asteroidsLeft[i] = new ImageView(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+            asteroidsLeftValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+            asteroidsLeftValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+            asteroidsLeftValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+            asteroidsLeftValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+            asteroidsLeftValues[i][4] = asteroidsRotationRandom;
+            generateAsteroidsLeftPosition(asteroidsLeft[i]);
+            root.getChildren().add(asteroidsLeft[i]);
+            asteroidsLeftGap += 88;
+        }
+        
+        for (int i = 0; i < asteroidsLeftEdge.length; i++) {
+            asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+            asteroidsRotationRandom = gameRandom.nextInt(2);
+            asteroidsLeftEdge[i] = new ImageView(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+            asteroidsLeftEdgeValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+            asteroidsLeftEdgeValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+            asteroidsLeftEdgeValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+            asteroidsLeftEdgeValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+            asteroidsLeftEdgeValues[i][4] = asteroidsRotationRandom;
+            generateAsteroidsLeftEdgePosition(asteroidsLeftEdge[i]);
+            root.getChildren().add(asteroidsLeftEdge[i]);
+            asteroidsLeftEdgeGap += 88;
+        }
+        
+        for (int i = 0; i < asteroidsMiddle.length; i++) {
+            asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+            asteroidsRotationRandom = gameRandom.nextInt(2);
+            asteroidsMiddle[i] = new ImageView(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+            asteroidsMiddleValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+            asteroidsMiddleValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+            asteroidsMiddleValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+            asteroidsMiddleValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+            asteroidsMiddleValues[i][4] = asteroidsRotationRandom;
+            generateAsteroidsMiddlePosition(asteroidsMiddle[i], asteroidsMiddleValues[i][1]);
+            root.getChildren().add(asteroidsMiddle[i]);
+        }
+        
+        for (int i = 0; i < asteroidsRight.length; i++) {
+            asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+            asteroidsRotationRandom = gameRandom.nextInt(2);
+            asteroidsRight[i] = new ImageView(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+            asteroidsRightValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+            asteroidsRightValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+            asteroidsRightValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+            asteroidsRightValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+            asteroidsRightValues[i][4] = asteroidsRotationRandom;
+            generateAsteroidsRightPosition(asteroidsRight[i], asteroidsRightValues[i][1]);
+            root.getChildren().add(asteroidsRight[i]);
+            asteroidsRightGap += 88;
+        }
+        
+        for (int i = 0; i < asteroidsRightEdge.length; i++) {
+            asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+            asteroidsRotationRandom = gameRandom.nextInt(2);
+            asteroidsRightEdge[i] = new ImageView(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+            asteroidsRightEdgeValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+            asteroidsRightEdgeValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+            asteroidsRightEdgeValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+            asteroidsRightEdgeValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+            asteroidsRightEdgeValues[i][4] = asteroidsRotationRandom;
+            generateAsteroidsRightEdgePosition(asteroidsRightEdge[i], asteroidsRightEdgeValues[i][1]);
+            root.getChildren().add(asteroidsRightEdge[i]);
+            asteroidsRightEdgeGap += 88;
         }
     }
     
     private void createExplosions() {
-        for (ImageView img : explosions) {
-            img.setLayoutY(-120);
-            root.getChildren().add(img);
+        explosions = new ImageView[4];
+        
+        for (int i = 0; i < explosions.length; i++) {
+            explosions[i] = new ImageView(EXPLOSION_SPRITE_IMAGES[0]);
+            explosions[i].setLayoutY(-120);
+            root.getChildren().add(explosions[i]);
         }
     }
     
     private void generateStars() {
-        if (stars[starsRandom].getLayoutY() > 833) {
-            starsRandom = gameRandom.nextInt(stars.length);
-            generateStarsPosition(stars[starsRandom]);
-        }
-        
-        else {
-            stars[starsRandom].setLayoutY(stars[starsRandom].getLayoutY() + 2);
-        }
-        
-        if (starsCopy1[starsCopy1Random].getLayoutY() > 833) {
-            starsCopy1Random = gameRandom.nextInt(starsCopy1.length);
-            generateStarsPosition(starsCopy1[starsCopy1Random]);
-        }
-        
-        else {
-            starsCopy1[starsCopy1Random].setLayoutY(starsCopy1[starsCopy1Random].getLayoutY() + 2);
-        }
-        
-        if (starsCopy2[starsCopy2Random].getLayoutY() > 833) {
-            starsCopy2Random = gameRandom.nextInt(starsCopy2.length);
-            generateStarsPosition(starsCopy2[starsCopy2Random]);
-        }
-        
-        else {
-            starsCopy2[starsCopy2Random].setLayoutY(starsCopy2[starsCopy2Random].getLayoutY() + 2);
-        }
-        
-        if (starsCopy3[starsCopy3Random].getLayoutY() > 833) {
-            starsCopy3Random = gameRandom.nextInt(starsCopy3.length);
-            generateStarsPosition(starsCopy3[starsCopy3Random]);
-        }
-        
-        else {
-            starsCopy3[starsCopy3Random].setLayoutY(starsCopy3[starsCopy3Random].getLayoutY() + 2);
-        }
-        
-        if (starsCopy4[starsCopy4Random].getLayoutY() > 833) {
-            starsCopy4Random = gameRandom.nextInt(starsCopy4.length);
-            generateStarsPosition(starsCopy4[starsCopy4Random]);
-        }
-        
-        else {
-            starsCopy4[starsCopy4Random].setLayoutY(starsCopy4[starsCopy4Random].getLayoutY() + 2);
-        }
-        
-        if (starsCopy5[starsCopy5Random].getLayoutY() > 833) {
-            starsCopy5Random = gameRandom.nextInt(starsCopy5.length);
-            generateStarsPosition(starsCopy5[starsCopy5Random]);
-        }
-        
-        else {
-            starsCopy5[starsCopy5Random].setLayoutY(starsCopy5[starsCopy5Random].getLayoutY() + 2);
+        for (int i = 0; i < stars.length; i++) {
+            if (stars[i][starsRandom[i]].getLayoutY() > 803) {
+                starsRandom[i] = gameRandom.nextInt(stars[i].length);
+                generateStarsPosition(stars[i][starsRandom[i]]);
+            }
+            
+            else {
+                stars[i][starsRandom[i]].setLayoutY(stars[i][starsRandom[i]].getLayoutY() + 2);
+            }
         }
     }
     
     private void generateAsteroids() {
-        for (int i = 0; i < asteroids.length; i++) {
-            if (asteroids[i].getLayoutY() > 833) {
-                asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
-                asteroids[i].setImage(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
-                asteroidsValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
-                asteroidsValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
-                asteroidsValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
-                asteroidsValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
-                generateAsteroidsPosition(asteroids[i]);
+        asteroidsLeftGap = 44;
+        asteroidsLeftEdgeGap = 88;
+        asteroidsRightGap = 44;
+        asteroidsRightEdgeGap = 88;
+        
+        for (int i = 0; i < asteroidsLeft.length; i++) {
+            if (asteroidsLeft[i].getLayoutY() > 833) {
+                respawnAsteroidsLeft(i);
             }
             
             else {
-                asteroids[i].setLayoutY(asteroids[i].getLayoutY() + 7);
-                asteroids[i].setRotate(asteroids[i].getRotate() + 4);
+                asteroidsLeft[i].setLayoutY(asteroidsLeft[i].getLayoutY() + 7);
+                
+                if (asteroidsLeftValues[i][4] == 1) {
+                    asteroidsLeft[i].setRotate(asteroidsLeft[i].getRotate() + 4);
+                }
+                
+                else {
+                    asteroidsLeft[i].setRotate(asteroidsLeft[i].getRotate() - 4);
+                }
+            }
+        }
+        
+        for (int i = 0; i < asteroidsLeftEdge.length; i++) {
+            if (asteroidsLeftEdge[i].getLayoutY() > 833) {
+                respawnAsteroidsLeftEdge(i);
+            }
+            
+            else {
+                asteroidsLeftEdge[i].setLayoutY(asteroidsLeftEdge[i].getLayoutY() + 7);
+                
+                if (asteroidsLeftEdgeValues[i][4] == 1) {
+                    asteroidsLeftEdge[i].setRotate(asteroidsLeftEdge[i].getRotate() + 4);
+                }
+                
+                else {
+                    asteroidsLeftEdge[i].setRotate(asteroidsLeftEdge[i].getRotate() - 4);
+                }
+            }
+        }
+        
+        for (int i = 0; i < asteroidsMiddle.length; i++) {
+            if (asteroidsMiddle[i].getLayoutY() > 833) {
+                respawnAsteroidsMiddle(i);
+            }
+            
+            else {
+                asteroidsMiddle[i].setLayoutY(asteroidsMiddle[i].getLayoutY() + 7);
+                
+                if (asteroidsMiddleValues[i][4] == 1) {
+                    asteroidsMiddle[i].setRotate(asteroidsMiddle[i].getRotate() + 4);
+                }
+                
+                else {
+                    asteroidsMiddle[i].setRotate(asteroidsMiddle[i].getRotate() - 4);
+                }
+            }
+        }
+        
+        for (int i = 0; i < asteroidsRight.length; i++) {
+            if (asteroidsRight[i].getLayoutY() > 833) {
+                respawnAsteroidsRight(i);
+            }
+            
+            else {
+                asteroidsRight[i].setLayoutY(asteroidsRight[i].getLayoutY() + 7);
+                
+                if (asteroidsRightValues[i][4] == 1) {
+                    asteroidsRight[i].setRotate(asteroidsRight[i].getRotate() + 4);
+                }
+                
+                else {
+                    asteroidsRight[i].setRotate(asteroidsRight[i].getRotate() - 4);
+                }
+            }
+        }
+        
+        for (int i = 0; i < asteroidsRightEdge.length; i++) {
+            if (asteroidsRightEdge[i].getLayoutY() > 833) {
+                respawnAsteroidsRightEdge(i);
+            }
+            
+            else {
+                asteroidsRightEdge[i].setLayoutY(asteroidsRightEdge[i].getLayoutY() + 7);
+                
+                if (asteroidsRightEdgeValues[i][4] == 1) {
+                    asteroidsRightEdge[i].setRotate(asteroidsRightEdge[i].getRotate() + 4);
+                }
+                
+                else {
+                    asteroidsRightEdge[i].setRotate(asteroidsRightEdge[i].getRotate() - 4);
+                }
             }
         }
     }
     
-    private void generateStarsPosition(ImageView image) {
-        image.setLayoutX(gameRandom.nextInt(989));
-        image.setLayoutY(- (gameRandom.nextInt(1600) + 35));
+    private void respawnAsteroidsLeft(int index) {
+        asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+        asteroidsRotationRandom = gameRandom.nextInt(2);
+        asteroidsLeft[index].setImage(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+        asteroidsLeftValues[index][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+        asteroidsLeftValues[index][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+        asteroidsLeftValues[index][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+        asteroidsLeftValues[index][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+        asteroidsLeftValues[index][4] = asteroidsRotationRandom;
+        generateAsteroidsLeftPosition(asteroidsLeft[index]);
+        asteroidsLeftGap += 88;
     }
     
-    private void generateAsteroidsPosition(ImageView image) {
-        image.setLayoutX(gameRandom.nextInt(949));
-        image.setLayoutY(- (gameRandom.nextInt(1600) + 65));
+    private void respawnAsteroidsLeftEdge(int index) {
+        asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+        asteroidsRotationRandom = gameRandom.nextInt(2);
+        asteroidsLeftEdge[index].setImage(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+        asteroidsLeftEdgeValues[index][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+        asteroidsLeftEdgeValues[index][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+        asteroidsLeftEdgeValues[index][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+        asteroidsLeftEdgeValues[index][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+        asteroidsLeftEdgeValues[index][4] = asteroidsRotationRandom;
+        generateAsteroidsLeftEdgePosition(asteroidsLeftEdge[index]);
+        asteroidsLeftEdgeGap += 88;
+    }
+    
+    private void respawnAsteroidsMiddle(int index) {
+        asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+        asteroidsRotationRandom = gameRandom.nextInt(2);
+        asteroidsMiddle[index].setImage(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+        asteroidsMiddleValues[index][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+        asteroidsMiddleValues[index][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+        asteroidsMiddleValues[index][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+        asteroidsMiddleValues[index][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+        asteroidsMiddleValues[index][4] = asteroidsRotationRandom;
+        generateAsteroidsMiddlePosition(asteroidsMiddle[index], asteroidsMiddleValues[index][1]);
+    }
+    
+    private void respawnAsteroidsRight(int index) {
+        asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+        asteroidsRotationRandom = gameRandom.nextInt(2);
+        asteroidsRight[index].setImage(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+        asteroidsRightValues[index][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+        asteroidsRightValues[index][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+        asteroidsRightValues[index][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+        asteroidsRightValues[index][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+        asteroidsRightValues[index][4] = asteroidsRotationRandom;
+        generateAsteroidsRightPosition(asteroidsRight[index], asteroidsRightValues[index][1]);
+        asteroidsRightGap += 88;
+    }
+    
+    private void respawnAsteroidsRightEdge(int index) {
+        asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
+        asteroidsRotationRandom = gameRandom.nextInt(2);
+        asteroidsRightEdge[index].setImage(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
+        asteroidsRightEdgeValues[index][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
+        asteroidsRightEdgeValues[index][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
+        asteroidsRightEdgeValues[index][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
+        asteroidsRightEdgeValues[index][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
+        asteroidsRightEdgeValues[index][4] = asteroidsRotationRandom;
+        generateAsteroidsRightEdgePosition(asteroidsRightEdge[index], asteroidsRightEdgeValues[index][1]);
+        asteroidsRightEdgeGap += 88;
+    }
+    
+    private void generateStarsPosition(ImageView image) {
+        image.setLayoutX(gameRandom.nextInt(990));
+        image.setLayoutY(- (gameRandom.nextInt(769) + 35));
+    }
+    
+    private void generateAsteroidsLeftPosition(ImageView image) {
+        image.setLayoutX(gameRandom.nextInt(241));
+        image.setLayoutY(-asteroidsLeftGap);
+    }
+    
+    private void generateAsteroidsLeftEdgePosition(ImageView image) {
+        image.setLayoutX(gameRandom.nextInt(121));
+        image.setLayoutY(-asteroidsLeftEdgeGap);
+    }
+    
+    private void generateAsteroidsMiddlePosition(ImageView image, double halfWidth) {
+        image.setLayoutX(gameRandom.nextInt((int) (1025 - halfWidth * 2)));
+        image.setLayoutY(- (gameRandom.nextInt(1601) + 65));
+    }
+    
+    private void generateAsteroidsRightPosition(ImageView image, double halfWidth) {
+        image.setLayoutX(ThreadLocalRandom.current().nextInt(709, (int) (1025 - halfWidth * 2)));
+        image.setLayoutY(-asteroidsRightGap);
+    }
+    
+    private void generateAsteroidsRightEdgePosition(ImageView image, double halfWidth) {
+        image.setLayoutX(ThreadLocalRandom.current().nextInt(829, (int) (1025 - halfWidth * 2)));
+        image.setLayoutY(-asteroidsRightEdgeGap);
     }
     
     private void animateShip() {
@@ -405,12 +543,9 @@ public class GameView {
         for (Image img : BLUE_STAR_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
             starsFrames.add(new KeyFrame(frameTime, e -> {
-                stars[0].setImage(img);
-                starsCopy1[0].setImage(img);
-                starsCopy2[0].setImage(img);
-                starsCopy3[0].setImage(img);
-                starsCopy4[0].setImage(img);
-                starsCopy5[0].setImage(img);
+                for (ImageView[] star : stars) {
+                    star[0].setImage(img);
+                }
             }));
         }
         
@@ -419,12 +554,9 @@ public class GameView {
         for (Image img : WHITE_STAR_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
             starsFrames.add(new KeyFrame(frameTime, e -> {
-                stars[1].setImage(img);
-                starsCopy1[1].setImage(img);
-                starsCopy2[1].setImage(img);
-                starsCopy3[1].setImage(img);
-                starsCopy4[1].setImage(img);
-                starsCopy5[1].setImage(img);
+                for (ImageView[] star : stars) {
+                    star[1].setImage(img);
+                }
             }));
         }
         
@@ -586,38 +718,148 @@ public class GameView {
     }
     
     private void checkCollisions() {
-        for (int i = 0; i < asteroids.length; i++) {
-            if (SHIP_SPRITE_RADIUS + asteroidsValues[i][0] > calculateDistance(
-                    asteroids[i].getLayoutX() + asteroidsValues[i][1], 
+        for (int i = 0; i < asteroidsLeft.length; i++) {
+            if (SHIP_SPRITE_RADIUS + asteroidsLeftValues[i][0] > calculateDistance(
+                    asteroidsLeft[i].getLayoutX() + asteroidsLeftValues[i][1], 
                     ship.getLayoutX() + 37.5, 
-                    asteroids[i].getLayoutY() + asteroidsValues[i][2], 
+                    asteroidsLeft[i].getLayoutY() + asteroidsLeftValues[i][2], 
                     ship.getLayoutY() + 50
                 )
             ) {
-                switch ((int) asteroidsValues[i][3]) {
-                    case 4:
-                        explode(explosions[2], asteroids[i].getLayoutX(), asteroids[i].getLayoutY());
+                switch ((int) asteroidsLeftValues[i][3]) {
+                    case 3:
+                        explode(explosions[2], asteroidsLeft[i].getLayoutX(), asteroidsLeft[i].getLayoutY());
                         explosionsTimeline.setOnFinished(e -> explosions[2].setLayoutY(-30));
                         break;
                         
-                    case 5:
-                        explode(explosions[1], asteroids[i].getLayoutX(), asteroids[i].getLayoutY());
+                    case 10:
+                        explode(explosions[1], asteroidsLeft[i].getLayoutX(), asteroidsLeft[i].getLayoutY());
                         explosionsTimeline.setOnFinished(e -> explosions[1].setLayoutY(-75));
                         break;
                     
                     default:
-                        explode(explosions[3], asteroids[i].getLayoutX(), asteroids[i].getLayoutY());
+                        explode(explosions[3], asteroidsLeft[i].getLayoutX(), asteroidsLeft[i].getLayoutY());
                         explosionsTimeline.setOnFinished(e -> explosions[3].setLayoutY(-20));
                 }
                 
-                dealDamage(asteroidsValues[i][3]);
-                asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
-                asteroids[i].setImage(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
-                asteroidsValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
-                asteroidsValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
-                asteroidsValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
-                asteroidsValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
-                generateAsteroidsPosition(asteroids[i]);
+                dealDamage(asteroidsLeftValues[i][3]);
+                respawnAsteroidsLeft(i);
+            }
+        }
+        
+        for (int i = 0; i < asteroidsLeftEdge.length; i++) {
+            if (SHIP_SPRITE_RADIUS + asteroidsLeftEdgeValues[i][0] > calculateDistance(
+                    asteroidsLeftEdge[i].getLayoutX() + asteroidsLeftEdgeValues[i][1], 
+                    ship.getLayoutX() + 37.5, 
+                    asteroidsLeftEdge[i].getLayoutY() + asteroidsLeftEdgeValues[i][2], 
+                    ship.getLayoutY() + 50
+                )
+            ) {
+                switch ((int) asteroidsLeftEdgeValues[i][3]) {
+                    case 3:
+                        explode(explosions[2], asteroidsLeftEdge[i].getLayoutX(), asteroidsLeftEdge[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[2].setLayoutY(-30));
+                        break;
+                        
+                    case 10:
+                        explode(explosions[1], asteroidsLeftEdge[i].getLayoutX(), asteroidsLeftEdge[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[1].setLayoutY(-75));
+                        break;
+                    
+                    default:
+                        explode(explosions[3], asteroidsLeftEdge[i].getLayoutX(), asteroidsLeftEdge[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[3].setLayoutY(-20));
+                }
+                
+                dealDamage(asteroidsLeftEdgeValues[i][3]);
+                respawnAsteroidsLeftEdge(i);
+            }
+        }
+        
+        for (int i = 0; i < asteroidsMiddle.length; i++) {
+            if (SHIP_SPRITE_RADIUS + asteroidsMiddleValues[i][0] > calculateDistance(
+                    asteroidsMiddle[i].getLayoutX() + asteroidsMiddleValues[i][1], 
+                    ship.getLayoutX() + 37.5, 
+                    asteroidsMiddle[i].getLayoutY() + asteroidsMiddleValues[i][2], 
+                    ship.getLayoutY() + 50
+                )
+            ) {
+                switch ((int) asteroidsMiddleValues[i][3]) {
+                    case 3:
+                        explode(explosions[2], asteroidsMiddle[i].getLayoutX(), asteroidsMiddle[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[2].setLayoutY(-30));
+                        break;
+                        
+                    case 10:
+                        explode(explosions[1], asteroidsMiddle[i].getLayoutX(), asteroidsMiddle[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[1].setLayoutY(-75));
+                        break;
+                    
+                    default:
+                        explode(explosions[3], asteroidsMiddle[i].getLayoutX(), asteroidsMiddle[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[3].setLayoutY(-20));
+                }
+                
+                dealDamage(asteroidsMiddleValues[i][3]);
+                respawnAsteroidsMiddle(i);
+            }
+        }
+        
+        for (int i = 0; i < asteroidsRight.length; i++) {
+            if (SHIP_SPRITE_RADIUS + asteroidsRightValues[i][0] > calculateDistance(
+                    asteroidsRight[i].getLayoutX() + asteroidsRightValues[i][1], 
+                    ship.getLayoutX() + 37.5, 
+                    asteroidsRight[i].getLayoutY() + asteroidsRightValues[i][2], 
+                    ship.getLayoutY() + 50
+                )
+            ) {
+                switch ((int) asteroidsRightValues[i][3]) {
+                    case 3:
+                        explode(explosions[2], asteroidsRight[i].getLayoutX(), asteroidsRight[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[2].setLayoutY(-30));
+                        break;
+                        
+                    case 10:
+                        explode(explosions[1], asteroidsRight[i].getLayoutX(), asteroidsRight[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[1].setLayoutY(-75));
+                        break;
+                    
+                    default:
+                        explode(explosions[3], asteroidsRight[i].getLayoutX(), asteroidsRight[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[3].setLayoutY(-20));
+                }
+                
+                dealDamage(asteroidsRightValues[i][3]);
+                respawnAsteroidsRight(i);
+            }
+        }
+        
+        for (int i = 0; i < asteroidsRightEdge.length; i++) {
+            if (SHIP_SPRITE_RADIUS + asteroidsRightEdgeValues[i][0] > calculateDistance(
+                    asteroidsRightEdge[i].getLayoutX() + asteroidsRightEdgeValues[i][1], 
+                    ship.getLayoutX() + 37.5, 
+                    asteroidsRightEdge[i].getLayoutY() + asteroidsRightEdgeValues[i][2], 
+                    ship.getLayoutY() + 50
+                )
+            ) {
+                switch ((int) asteroidsRightEdgeValues[i][3]) {
+                    case 3:
+                        explode(explosions[2], asteroidsRightEdge[i].getLayoutX(), asteroidsRightEdge[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[2].setLayoutY(-30));
+                        break;
+                        
+                    case 10:
+                        explode(explosions[1], asteroidsRightEdge[i].getLayoutX(), asteroidsRightEdge[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[1].setLayoutY(-75));
+                        break;
+                    
+                    default:
+                        explode(explosions[3], asteroidsRightEdge[i].getLayoutX(), asteroidsRightEdge[i].getLayoutY());
+                        explosionsTimeline.setOnFinished(e -> explosions[3].setLayoutY(-20));
+                }
+                
+                dealDamage(asteroidsRightEdgeValues[i][3]);
+                respawnAsteroidsRightEdge(i);
             }
         }
     }
