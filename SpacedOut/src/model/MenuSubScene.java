@@ -21,35 +21,34 @@ import javafx.util.Duration;
  */
 public class MenuSubScene extends SubScene {
     
-    private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
     private static final String BACKGROUND_IMAGE = "/model/assets/green_panel.png";
     private AnchorPane root;
     private boolean isHidden;
     
-    public MenuSubScene() {
-        super(new AnchorPane(), 600, 400);
-        prefWidth(600);
-        prefHeight(400);
+    public MenuSubScene(int prefWidth, int prefHeight, double y) {
+        super(new AnchorPane(), prefWidth, prefHeight);
+        prefWidth(prefWidth);
+        prefHeight(prefHeight);
         
-        BackgroundImage image = new BackgroundImage(new Image(BACKGROUND_IMAGE, 600, 400, false, true), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
+        BackgroundImage image = new BackgroundImage(new Image(BACKGROUND_IMAGE, prefWidth, prefHeight, false, true), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
         root = (AnchorPane) this.getRoot();
         root.setBackground(new Background(image));
         isHidden = true;
         setLayoutX(1024);
-        setLayoutY(226.75);
+        setLayoutY(y);
     }
     
     public AnchorPane getPane() {
         return root;
     }
     
-    public void moveSubScene() {
+    public void moveSubScene(int endpoint) {
         TranslateTransition transition = new TranslateTransition();
         transition.setDuration(Duration.seconds(0.3));
         transition.setNode(this);
         
         if (isHidden) {
-            transition.setToX(-678);
+            transition.setToX(endpoint);
             isHidden = false;
         }
         

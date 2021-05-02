@@ -22,52 +22,55 @@ import javafx.scene.text.TextAlignment;
 public class PanelButton extends Button {
     
     private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
-    private static final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button12.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
-    private static final String BUTTON_RELEASED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button11.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
-    private static final String BUTTON_DEFAULT_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/yellow_button11.png'); -fx-background-size: 147 147; -fx-background-repeat: no-repeat;";
+    private String buttonPressedStyle;
+    private String buttonReleasedStyle;
+    private String buttonDefaultStyle;
     private boolean isPressed;
     
-    public PanelButton(String text) {
+    public PanelButton(String text, int fontSize, int prefWidth, int prefHeight) {
         setText(text);
-        setButtonFont();
-        setPrefWidth(147);
-        setPrefHeight(147);
-        setStyle(BUTTON_DEFAULT_STYLE);
+        setButtonFont(fontSize);
+        setPrefWidth(prefWidth);
+        setPrefHeight(prefHeight);
+        buttonPressedStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button12.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
+        buttonReleasedStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button11.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
+        buttonDefaultStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/yellow_button11.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
+        setStyle(buttonDefaultStyle);
         isPressed = false;
-        initButtonListeners();
+        initButtonListeners(prefHeight);
     }
     
-    private void setButtonFont() {
+    private void setButtonFont(int size) {
         try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), 23));
+            setFont(Font.loadFont(new FileInputStream(FONT_PATH), size));
         } 
         
         catch (FileNotFoundException ex) {
-            setFont(Font.font("Verdana", 23));
+            setFont(Font.font("Verdana", size));
         }
     }
     
-    private void setButtonPressed() {
-        setStyle(BUTTON_PRESSED_STYLE);
-        setLayoutY(getLayoutY() + 12);
+    private void setButtonPressed(int offset) {
+        setStyle(buttonPressedStyle);
+        setLayoutY(getLayoutY() + (double) 4 * offset / 49);
     }
     
-    private void setButtonReleased() {
-        setStyle(BUTTON_RELEASED_STYLE);
-        setLayoutY(getLayoutY() - 12);
+    private void setButtonReleased(int offset) {
+        setStyle(buttonReleasedStyle);
+        setLayoutY(getLayoutY() - (double) 4 * offset / 49);
     }
     
-    private void setButtonExited() {
-        setStyle(BUTTON_DEFAULT_STYLE);
-        setLayoutY(getLayoutY() - 12);
+    private void setButtonExited(int offset) {
+        setStyle(buttonDefaultStyle);
+        setLayoutY(getLayoutY() - (double) 4 * offset / 49);
     }
     
-    private void initButtonListeners() {
+    private void initButtonListeners(int height) {
         setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
                 if (t.getButton().equals(MouseButton.PRIMARY)) {
-                    setButtonPressed();
+                    setButtonPressed(height);
                     isPressed = true;
                 }
             }
@@ -77,7 +80,7 @@ public class PanelButton extends Button {
             @Override
             public void handle(MouseEvent t) {
                 if (t.getButton().equals(MouseButton.PRIMARY) && isPressed) {
-                    setButtonReleased();
+                    setButtonReleased(height);
                     isPressed = false;
                 }
             }
@@ -86,7 +89,7 @@ public class PanelButton extends Button {
         setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent t) {
-                setStyle(BUTTON_RELEASED_STYLE);
+                setStyle(buttonReleasedStyle);
             }
         });
         
@@ -94,12 +97,12 @@ public class PanelButton extends Button {
             @Override
             public void handle(MouseEvent t) {
                 if (isPressed) {
-                    setButtonExited();
+                    setButtonExited(height);
                     isPressed = false;
                 }
                 
                 else {
-                    setStyle(BUTTON_DEFAULT_STYLE);
+                    setStyle(buttonDefaultStyle);
                 }
             }
         });

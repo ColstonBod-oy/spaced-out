@@ -67,31 +67,31 @@ public class ViewManager {
     
     private void setActiveSubScene(MenuSubScene subScene) {
         if (toHide != null) {
-            toHide.moveSubScene();
+            toHide.moveSubScene(-678);
         }
         
-        subScene.moveSubScene();
+        subScene.moveSubScene(-678);
         toHide = subScene;
     }
     
     private void createMenuSubScenes() {
         createStartSubScene();
         
-        optionsSubScene = new MenuSubScene();
+        optionsSubScene = new MenuSubScene(600, 400, 226.75);
         root.getChildren().add(optionsSubScene);
         
-        helpSubScene = new MenuSubScene();
+        helpSubScene = new MenuSubScene(600, 400, 226.75);
         root.getChildren().add(helpSubScene);
         
-        creditsSubScene = new MenuSubScene();
+        creditsSubScene = new MenuSubScene(600, 400, 226.75);
         root.getChildren().add(creditsSubScene);
     }
     
     private void createStartSubScene() {
-        startSubScene = new MenuSubScene();
+        startSubScene = new MenuSubScene(600, 400, 226.75);
         root.getChildren().add(startSubScene);
         
-        MenuLabel startLabel = new MenuLabel("CHOOSE LEVEL");
+        MenuLabel startLabel = new MenuLabel("CHOOSE LEVEL", 23, 380, 49);
         startLabel.setLayoutX(110);
         startLabel.setLayoutY(37.25);
         startSubScene.getPane().getChildren().add(startLabel);
@@ -102,7 +102,8 @@ public class ViewManager {
     }
     
     private void createLevel1Button() {
-        PanelButton level1Button = new PanelButton("LEVEL1");
+        PanelButton level1Button = new PanelButton("", 0, 147, 147);
+        level1Button.setGraphic(new ImageView("view/assets/numeral1.png"));
         level1Button.setLayoutX(39.75);
         level1Button.setLayoutY(157.75);
         startSubScene.getPane().getChildren().add(level1Button);
@@ -117,14 +118,16 @@ public class ViewManager {
     }
     
     private void createLevel2Button() {
-        PanelButton level2Button = new PanelButton("LEVEL2");
+        PanelButton level2Button = new PanelButton("", 0, 147, 147);
+        level2Button.setGraphic(new ImageView("view/assets/numeral2.png"));
         level2Button.setLayoutX(226.5);
         level2Button.setLayoutY(157.75);
         startSubScene.getPane().getChildren().add(level2Button);
     }
     
     private void createLevel3Button() {
-        PanelButton level3Button = new PanelButton("LEVEL3");
+        PanelButton level3Button = new PanelButton("", 0, 147, 147);
+        level3Button.setGraphic(new ImageView("view/assets/numeral3.png"));
         level3Button.setLayoutX(413.25);
         level3Button.setLayoutY(157.75);
         startSubScene.getPane().getChildren().add(level3Button);

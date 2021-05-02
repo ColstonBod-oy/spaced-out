@@ -26,25 +26,25 @@ public class MenuLabel extends Label {
     private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
     private static final String BACKGROUND_IMAGE = "/view/assets/green_button13.png";
     
-    public MenuLabel(String text) {
-        setPrefWidth(380);
-        setPrefHeight(49);
+    public MenuLabel(String text, int fontSize, int prefWidth, int prefHeight) {
         setText(text);
         setWrapText(true);
-        setLabelFont();
+        setLabelFont(fontSize);
+        setPrefWidth(prefWidth);
+        setPrefHeight(prefHeight);
         setAlignment(Pos.CENTER);
         
-        BackgroundImage image = new BackgroundImage(new Image(BACKGROUND_IMAGE, 380, 49, false, true), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
+        BackgroundImage image = new BackgroundImage(new Image(BACKGROUND_IMAGE, prefWidth, prefHeight, false, true), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
         setBackground(new Background(image));
     }
     
-    private void setLabelFont() {
+    private void setLabelFont(int size) {
         try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), 23));
+            setFont(Font.loadFont(new FileInputStream(FONT_PATH), size));
         } 
         
         catch (FileNotFoundException ex) {
-            setFont(Font.font("Verdana", 23));
+            setFont(Font.font("Verdana", size));
         }
     }
     
