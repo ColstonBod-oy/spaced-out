@@ -34,7 +34,7 @@ public class PanelButton extends Button {
         setPrefHeight(prefHeight);
         buttonPressedStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button12.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
         buttonReleasedStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button11.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
-        buttonDefaultStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/yellow_button11.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
+        buttonDefaultStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button06.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
         setStyle(buttonDefaultStyle);
         isPressed = false;
         initButtonListeners(prefHeight);

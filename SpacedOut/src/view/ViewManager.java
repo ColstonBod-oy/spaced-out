@@ -36,6 +36,9 @@ public class ViewManager {
     private MenuButton creditsButton;
     private MenuButton exitButton;
     private MenuButton toDeactivate;
+    private PanelButton level1Button;
+    private PanelButton level2Button;
+    private PanelButton level3Button;
     private MenuSubScene startSubScene;
     private MenuSubScene optionsSubScene;
     private MenuSubScene helpSubScene;
@@ -102,7 +105,7 @@ public class ViewManager {
     }
     
     private void createLevel1Button() {
-        PanelButton level1Button = new PanelButton("", 0, 147, 147);
+        level1Button = new PanelButton("", 0, 147, 147);
         level1Button.setGraphic(new ImageView("view/assets/numeral1.png"));
         level1Button.setLayoutX(39.75);
         level1Button.setLayoutY(157.75);
@@ -112,22 +115,24 @@ public class ViewManager {
             @Override
             public void handle(ActionEvent t) {
                 GameView level1 = new GameView();
-                level1.createNewGame(mainStage, 1);
+                level1.createNewGame(mainStage, 1, level2Button);
             }
         });
     }
     
     private void createLevel2Button() {
-        PanelButton level2Button = new PanelButton("", 0, 147, 147);
+        level2Button = new PanelButton("", 0, 147, 147);
         level2Button.setGraphic(new ImageView("view/assets/numeral2.png"));
+        level2Button.setDisable(true);
         level2Button.setLayoutX(226.5);
         level2Button.setLayoutY(157.75);
         startSubScene.getPane().getChildren().add(level2Button);
     }
     
     private void createLevel3Button() {
-        PanelButton level3Button = new PanelButton("", 0, 147, 147);
+        level3Button = new PanelButton("", 0, 147, 147);
         level3Button.setGraphic(new ImageView("view/assets/numeral3.png"));
+        level3Button.setDisable(true);
         level3Button.setLayoutX(413.25);
         level3Button.setLayoutY(157.75);
         startSubScene.getPane().getChildren().add(level3Button);

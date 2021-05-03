@@ -23,6 +23,7 @@ public class MenuSubScene extends SubScene {
     
     private static final String BACKGROUND_IMAGE = "/model/assets/green_panel.png";
     private AnchorPane root;
+    private TranslateTransition transition;
     private boolean isHidden;
     
     public MenuSubScene(int prefWidth, int prefHeight, double y) {
@@ -43,7 +44,7 @@ public class MenuSubScene extends SubScene {
     }
     
     public void moveSubScene(int endpoint) {
-        TranslateTransition transition = new TranslateTransition();
+        transition = new TranslateTransition();
         transition.setDuration(Duration.seconds(0.3));
         transition.setNode(this);
         
@@ -58,6 +59,10 @@ public class MenuSubScene extends SubScene {
         }
         
         transition.play();
+    }
+    
+    public TranslateTransition getTranslateTransition() {
+        return transition;
     }
     
 }

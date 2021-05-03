@@ -12,6 +12,7 @@ import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
@@ -78,7 +79,8 @@ public class GameView {
     private Stage gameStage;
     private AnimationTimer gameAnimationTimer;
     private Random gameRandom;
-    private MenuSubScene dialogSubScene;
+    private MenuSubScene gameOverSubScene;
+    private MenuSubScene levelClearedSubScene;
     private AnimationTimer asteroidsAnimationTimer;
     private TranslateTransition shipTranslateTransition;
     private Timeline shipTimeline;
@@ -117,8 +119,10 @@ public class GameView {
     private int life;
     private boolean gameOver;
     private int distanceTraveled;
+    private int distanceGoal;
     private Stage menuStage;
     private int chosenLevel;
+    private PanelButton nextLevelButton;
     
     public GameView() {
         gameRandom = new Random();
@@ -180,9 +184,10 @@ public class GameView {
         });
     }
     
-    public void createNewGame(Stage menuStage, int chosenLevel) {
+    public void createNewGame(Stage menuStage, int chosenLevel, PanelButton nextLevelButton) {
         this.menuStage = menuStage;
         this.chosenLevel = chosenLevel;
+        this.nextLevelButton = nextLevelButton;
         this.menuStage.hide();
         gameStage.show();
         animateShip();
@@ -190,13 +195,18 @@ public class GameView {
         animateExplosions();
         createGameElements();
         createGameLoop();
-        createGameDialog();
+        createGameOverScreen();
+        createLevelClearedScreen();
     }
     
     private void createGameElements() {
         life = 10;
         gameOver = false;
         distanceTraveled = 0;
+        
+        if (chosenLevel == 1) {
+            distanceGoal = 50;
+        }
         
         createStars();
         createShip();
@@ -344,6 +354,7 @@ public class GameView {
                 spawnStars();
                 spawnAsteroids();
                 checkCollisions();
+                checkLevelCleared();
             }
         };
         
@@ -406,14 +417,14 @@ public class GameView {
         asteroidsAnimationTimer.start();
     }
     
-    private void createGameDialog() {
-        dialogSubScene = new MenuSubScene(400, 250, 259);
-        root.getChildren().add(dialogSubScene);
+    private void createGameOverScreen() {
+        gameOverSubScene = new MenuSubScene(400, 250, 259);
+        root.getChildren().add(gameOverSubScene);
         
         MenuLabel dialogLabel = new MenuLabel("GAME OVER", 20, 250, 40);
         dialogLabel.setLayoutX(75);
         dialogLabel.setLayoutY(18.625);
-        dialogSubScene.getPane().getChildren().add(dialogLabel);
+        gameOverSubScene.getPane().getChildren().add(dialogLabel);
         
         createRestartButton();
         createQuitButton();
@@ -423,12 +434,12 @@ public class GameView {
         PanelButton restartButton = new PanelButton("RESTART", 14, 108, 108);
         restartButton.setLayoutX(62);
         restartButton.setLayoutY(95);
-        dialogSubScene.getPane().getChildren().add(restartButton);
+        gameOverSubScene.getPane().getChildren().add(restartButton);
         
         restartButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                dialogSubScene.moveSubScene(-712);
+                gameOverSubScene.moveSubScene(-712);
                 respawnShip();
             }
         });
@@ -438,7 +449,7 @@ public class GameView {
         PanelButton quitButton = new PanelButton("QUIT", 14, 108, 108);
         quitButton.setLayoutX(230);
         quitButton.setLayoutY(95);
-        dialogSubScene.getPane().getChildren().add(quitButton);
+        gameOverSubScene.getPane().getChildren().add(quitButton);
         
         quitButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -452,11 +463,22 @@ public class GameView {
         });
     }
     
+    private void createLevelClearedScreen() {
+        levelClearedSubScene = new MenuSubScene(400, 250, 259);
+        root.getChildren().add(levelClearedSubScene);
+        
+        MenuLabel dialogLabel = new MenuLabel("LEVEL CLEARED", 20, 250, 40);
+        dialogLabel.setLayoutX(75);
+        dialogLabel.setLayoutY(105);
+        levelClearedSubScene.getPane().getChildren().add(dialogLabel);
+    }
+    
     private void spawnStars() {
         for (int i = 0; i < stars.length; i++) {
             if (stars[i][starsRandom[i]].getLayoutY() > 803) {
                 starsRandom[i] = gameRandom.nextInt(stars[i].length);
                 generateStarsPosition(stars[i][starsRandom[i]]);
+                distanceTraveled += 1;
             }
             
             else {
@@ -492,11 +514,17 @@ public class GameView {
         
         for (int i = 0; i < asteroidsMiddle.length; i++) {
             if (asteroidsMiddle[i].getLayoutY() > 833) {
-                generateAsteroids(i, asteroidsMiddle, asteroidsMiddleValues);
-                generateAsteroidsMiddlePosition(asteroidsMiddle[i], asteroidsMiddleValues[i][1]);
+                if (distanceTraveled >= distanceGoal) {
+                    asteroidsMiddle[i].setLayoutY(-1666);
+                }
+                
+                else {
+                    generateAsteroids(i, asteroidsMiddle, asteroidsMiddleValues);
+                    generateAsteroidsMiddlePosition(asteroidsMiddle[i], asteroidsMiddleValues[i][1]);
+                }
             }
             
-            else {
+            else if (asteroidsMiddle[i].getLayoutY() != -1666) {
                 asteroidsMiddle[i].setLayoutY(asteroidsMiddle[i].getLayoutY() + 7);
             }
         }
@@ -528,6 +556,7 @@ public class GameView {
     
     private void respawnShip() {
         life = 10;
+        distanceTraveled = 0;
         shipAngle = 0;
         
         ship.setRotate(0);
@@ -880,6 +909,33 @@ public class GameView {
         }
     }
     
+    private void checkLevelCleared() {
+        boolean levelCleared = true;
+        
+        for (ImageView asteroid : asteroidsMiddle) {
+            if (asteroid.getLayoutY() != -1666) {
+                levelCleared = false;
+            }
+        }
+        
+        if (levelCleared) {
+            gameAnimationTimer.stop();
+            
+            PauseTransition delay = new PauseTransition(Duration.millis(1500));
+            delay.setOnFinished(e -> {
+                shipTimeline.stop();
+                starsTimeline.stop();
+                asteroidsAnimationTimer.stop();
+                gameStage.hide();
+                nextLevelButton.setDisable(false);
+                menuStage.show();
+            });
+            
+            levelClearedSubScene.moveSubScene(-712);
+            levelClearedSubScene.getTranslateTransition().setOnFinished(e -> delay.play());
+        }
+    }
+    
     private void explode(ImageView image, double x, double y) {
         image.setLayoutX(x);
         image.setLayoutY(y);
@@ -899,7 +955,7 @@ public class GameView {
                     explosion.setLayoutY(-120);
                 }
                 
-                dialogSubScene.moveSubScene(-712);
+                gameOverSubScene.moveSubScene(-712);
             });
         }
     }
