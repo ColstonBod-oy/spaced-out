@@ -11,23 +11,16 @@ import java.util.concurrent.ThreadLocalRandom;
 import javafx.animation.Animation;
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
 import javafx.animation.Timeline;
-import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.MenuLabel;
@@ -82,13 +75,9 @@ public class GameView {
     private MenuSubScene gameOverSubScene;
     private MenuSubScene levelClearedSubScene;
     private AnimationTimer asteroidsAnimationTimer;
-    private TranslateTransition shipTranslateTransition;
     private Timeline shipTimeline;
     private Timeline starsTimeline;
     private Timeline explosionsTimeline;
-    private Collection<KeyFrame> shipFrames;
-    private Collection<KeyFrame> starsFrames;
-    private Collection<KeyFrame> explosionsFrames;
     private Duration frameTime;
     private Duration frameGap;
     private boolean isAKeyPressed;
@@ -117,7 +106,6 @@ public class GameView {
     private int asteroidsRotationRandom;
     private int[] starsRandom;
     private int life;
-    private boolean gameOver;
     private int distanceTraveled;
     private int distanceGoal;
     private Stage menuStage;
@@ -201,7 +189,6 @@ public class GameView {
     
     private void createGameElements() {
         life = 10;
-        gameOver = false;
         distanceTraveled = 0;
         
         if (chosenLevel == 1) {
@@ -284,14 +271,7 @@ public class GameView {
         }
         
         for (int i = 0; i < asteroidsMiddle.length; i++) {
-            asteroidsRandom = gameRandom.nextInt(ASTEROID_SPRITE_IMAGES.length);
-            asteroidsRotationRandom = gameRandom.nextInt(2);
-            asteroidsMiddle[i] = new ImageView(ASTEROID_SPRITE_IMAGES[asteroidsRandom]);
-            asteroidsMiddleValues[i][0] = ASTEROID_SPRITE_VALUES[asteroidsRandom][0];
-            asteroidsMiddleValues[i][1] = ASTEROID_SPRITE_VALUES[asteroidsRandom][1];
-            asteroidsMiddleValues[i][2] = ASTEROID_SPRITE_VALUES[asteroidsRandom][2];
-            asteroidsMiddleValues[i][3] = ASTEROID_SPRITE_VALUES[asteroidsRandom][3];
-            asteroidsMiddleValues[i][4] = asteroidsRotationRandom;
+            initAsteroids(i, asteroidsMiddle, asteroidsMiddleValues);
             generateAsteroidsMiddlePosition(asteroidsMiddle[i], asteroidsMiddleValues[i][1]);
             root.getChildren().add(asteroidsMiddle[i]);
         }
@@ -564,15 +544,15 @@ public class GameView {
         ship.setLayoutY(GAME_HEIGHT);
         ship.setVisible(true);
         
-        shipTranslateTransition = new TranslateTransition(Duration.millis(2500), ship);
+        TranslateTransition shipTranslateTransition = new TranslateTransition(Duration.millis(2500), ship);
         shipTranslateTransition.setToY(-120);
-        shipTranslateTransition.play();
         shipTranslateTransition.setOnFinished(e -> {
             shipTranslateTransition.stop();
             ship.setLayoutY(ship.getLayoutY() + ship.getTranslateY());
             ship.setTranslateY(0);
             gameAnimationTimer.start();
         });
+        shipTranslateTransition.play();
     }
     
     private void generateAsteroids(int index, ImageView[] asteroids, double[][] asteroidsValues) {
@@ -640,7 +620,7 @@ public class GameView {
     private void animateShip() {
         ship = new ImageView(SHIP_SPRITE_IMAGES[0]);
         shipTimeline = new Timeline();
-        shipFrames = shipTimeline.getKeyFrames();
+        Collection<KeyFrame> shipFrames = shipTimeline.getKeyFrames();
         frameTime = Duration.ZERO;
         frameGap = Duration.millis(25);
         
@@ -656,7 +636,7 @@ public class GameView {
     
     private void animateStars() {
         starsTimeline = new Timeline();
-        starsFrames = starsTimeline.getKeyFrames();
+        Collection<KeyFrame> starsFrames = starsTimeline.getKeyFrames();
         frameTime = Duration.ZERO;
         frameGap = Duration.millis(100);
         
@@ -687,7 +667,7 @@ public class GameView {
     
     private void animateExplosions() {
         explosionsTimeline = new Timeline();
-        explosionsFrames = explosionsTimeline.getKeyFrames();
+        Collection<KeyFrame> explosionsFrames = explosionsTimeline.getKeyFrames();
         frameTime = Duration.ZERO;
         frameGap = Duration.millis(60);
         

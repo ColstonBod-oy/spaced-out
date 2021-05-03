@@ -31,10 +31,6 @@ public class ViewManager {
     private Stage mainStage;
     private List<MenuButton> menuButtons;
     private MenuButton startButton;
-    private MenuButton optionsButton;
-    private MenuButton helpButton;
-    private MenuButton creditsButton;
-    private MenuButton exitButton;
     private MenuButton toDeactivate;
     private PanelButton level1Button;
     private PanelButton level2Button;
@@ -171,7 +167,7 @@ public class ViewManager {
     }
     
     private void createOptionsButton() {
-        optionsButton = new MenuButton("OPTIONS");
+        MenuButton optionsButton = new MenuButton("OPTIONS");
         addMenuButton(optionsButton);
         
         optionsButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -184,7 +180,7 @@ public class ViewManager {
     }
     
     private void createHelpButton() {
-        helpButton = new MenuButton("HELP");
+        MenuButton helpButton = new MenuButton("HELP");
         addMenuButton(helpButton);
         
         helpButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -197,7 +193,7 @@ public class ViewManager {
     }
     
     private void createCreditsButton() {
-        creditsButton = new MenuButton("CREDITS");
+        MenuButton creditsButton = new MenuButton("CREDITS");
         addMenuButton(creditsButton);
         
         creditsButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -210,7 +206,7 @@ public class ViewManager {
     }
     
     private void createExitButton() {
-        exitButton = new MenuButton("EXIT");
+        MenuButton exitButton = new MenuButton("EXIT");
         addMenuButton(exitButton);
         
         exitButton.setOnAction(new EventHandler<ActionEvent>() {
