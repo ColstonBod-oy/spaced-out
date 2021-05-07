@@ -123,6 +123,14 @@ public class ViewManager {
         level2Button.setLayoutX(226.5);
         level2Button.setLayoutY(157.75);
         startSubScene.getPane().getChildren().add(level2Button);
+        
+        level2Button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                GameView level2 = new GameView();
+                level2.createNewGame(mainStage, 2, level3Button);
+            }
+        });
     }
     
     private void createLevel3Button() {
@@ -132,6 +140,14 @@ public class ViewManager {
         level3Button.setLayoutX(413.25);
         level3Button.setLayoutY(157.75);
         startSubScene.getPane().getChildren().add(level3Button);
+        
+        level3Button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                GameView level3 = new GameView();
+                level3.createNewGame(mainStage, 3, level1Button);
+            }
+        });
     }
     
     public Stage getMainStage() {

@@ -108,6 +108,8 @@ public class GameView {
     private int life;
     private int distanceTraveled;
     private int distanceGoal;
+    private int starsStep;
+    private int asteroidsStep;
     private Stage menuStage;
     private int chosenLevel;
     private PanelButton nextLevelButton;
@@ -192,7 +194,21 @@ public class GameView {
         distanceTraveled = 0;
         
         if (chosenLevel == 1) {
-            distanceGoal = 50;
+            distanceGoal = 100;
+            starsStep = 2;
+            asteroidsStep = 7;
+        }
+        
+        else if (chosenLevel == 2) {
+            distanceGoal = 200;
+            starsStep = 5;
+            asteroidsStep = 10;
+        }
+        
+        else {
+            distanceGoal = 250;
+            starsStep = 8;
+            asteroidsStep = 13;
         }
         
         createStars();
@@ -462,7 +478,7 @@ public class GameView {
             }
             
             else {
-                stars[i][starsRandom[i]].setLayoutY(stars[i][starsRandom[i]].getLayoutY() + 2);
+                stars[i][starsRandom[i]].setLayoutY(stars[i][starsRandom[i]].getLayoutY() + starsStep);
             }
         }
     }
@@ -476,7 +492,7 @@ public class GameView {
             }
             
             else {
-                asteroidsLeft[i].setLayoutY(asteroidsLeft[i].getLayoutY() + 7);
+                asteroidsLeft[i].setLayoutY(asteroidsLeft[i].getLayoutY() + asteroidsStep);
             }
         }
         
@@ -488,7 +504,7 @@ public class GameView {
             }
             
             else {
-                asteroidsLeftEdge[i].setLayoutY(asteroidsLeftEdge[i].getLayoutY() + 7);
+                asteroidsLeftEdge[i].setLayoutY(asteroidsLeftEdge[i].getLayoutY() + asteroidsStep);
             }
         }
         
@@ -505,7 +521,7 @@ public class GameView {
             }
             
             else if (asteroidsMiddle[i].getLayoutY() != -1666) {
-                asteroidsMiddle[i].setLayoutY(asteroidsMiddle[i].getLayoutY() + 7);
+                asteroidsMiddle[i].setLayoutY(asteroidsMiddle[i].getLayoutY() + asteroidsStep);
             }
         }
         
@@ -517,7 +533,7 @@ public class GameView {
             }
             
             else {
-                asteroidsRight[i].setLayoutY(asteroidsRight[i].getLayoutY() + 7);
+                asteroidsRight[i].setLayoutY(asteroidsRight[i].getLayoutY() + asteroidsStep);
             }
         }
         
@@ -529,7 +545,7 @@ public class GameView {
             }
             
             else {
-                asteroidsRightEdge[i].setLayoutY(asteroidsRightEdge[i].getLayoutY() + 7);
+                asteroidsRightEdge[i].setLayoutY(asteroidsRightEdge[i].getLayoutY() + asteroidsStep);
             }
         }
     }
@@ -798,7 +814,13 @@ public class GameView {
             ship.setRotate(shipAngle);
             
             if (ship.getLayoutY() < 648) {
-                ship.setLayoutY(ship.getLayoutY() + 2);
+                if (ship.getLayoutY() + starsStep > 648) {
+                    ship.setLayoutY(648);
+                }
+                
+                else {
+                    ship.setLayoutY(ship.getLayoutY() + starsStep);
+                }
             }
         }
     }
