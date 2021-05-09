@@ -417,7 +417,7 @@ public class GameView {
         gameOverSubScene = new MenuSubScene(400, 250, 259);
         root.getChildren().add(gameOverSubScene);
         
-        MenuLabel dialogLabel = new MenuLabel("GAME OVER", 20, 250, 40);
+        MenuLabel dialogLabel = new MenuLabel("GAME OVER", 20, 250, 40, -2);
         dialogLabel.setLayoutX(75);
         dialogLabel.setLayoutY(18.625);
         gameOverSubScene.getPane().getChildren().add(dialogLabel);
@@ -427,12 +427,12 @@ public class GameView {
     }
     
     private void createRestartButton() {
-        PanelButton restartButton = new PanelButton("RESTART", 14, 108, 108);
-        restartButton.setLayoutX(62);
-        restartButton.setLayoutY(95);
-        gameOverSubScene.getPane().getChildren().add(restartButton);
+        PanelButton dialogButton = new PanelButton("RESTART", 14, 108, 108);
+        dialogButton.setLayoutX(62);
+        dialogButton.setLayoutY(95);
+        gameOverSubScene.getPane().getChildren().add(dialogButton);
         
-        restartButton.setOnAction(new EventHandler<ActionEvent>() {
+        dialogButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
                 gameOverSubScene.moveSubScene(-712);
@@ -442,12 +442,12 @@ public class GameView {
     }
     
     private void createQuitButton() {
-        PanelButton quitButton = new PanelButton("QUIT", 14, 108, 108);
-        quitButton.setLayoutX(230);
-        quitButton.setLayoutY(95);
-        gameOverSubScene.getPane().getChildren().add(quitButton);
+        PanelButton dialogButton = new PanelButton("QUIT", 14, 108, 108);
+        dialogButton.setLayoutX(230);
+        dialogButton.setLayoutY(95);
+        gameOverSubScene.getPane().getChildren().add(dialogButton);
         
-        quitButton.setOnAction(new EventHandler<ActionEvent>() {
+        dialogButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
                 shipTimeline.stop();
@@ -463,10 +463,19 @@ public class GameView {
         levelClearedSubScene = new MenuSubScene(400, 250, 259);
         root.getChildren().add(levelClearedSubScene);
         
-        MenuLabel dialogLabel = new MenuLabel("LEVEL CLEARED", 20, 250, 40);
-        dialogLabel.setLayoutX(75);
-        dialogLabel.setLayoutY(105);
-        levelClearedSubScene.getPane().getChildren().add(dialogLabel);
+        if (chosenLevel == 3) {
+            MenuLabel dialogLabel = new MenuLabel("LEVEL CLEARED\n\nESCAPED ASTEROID BELT\nTHANKS FOR PLAYING!", 20, 350, 140, -10);
+            dialogLabel.setLayoutX(25);
+            dialogLabel.setLayoutY(55);
+            levelClearedSubScene.getPane().getChildren().add(dialogLabel);
+        }
+        
+        else {
+            MenuLabel dialogLabel = new MenuLabel("LEVEL CLEARED", 20, 250, 40, -2);
+            dialogLabel.setLayoutX(75);
+            dialogLabel.setLayoutY(105);
+            levelClearedSubScene.getPane().getChildren().add(dialogLabel);
+        }
     }
     
     private void spawnStars() {
@@ -486,24 +495,36 @@ public class GameView {
     private void spawnAsteroids() {
         for (int i = 0; i < asteroidsLeft.length; i++) {
             if (asteroidsLeft[i].getLayoutY() > 833) {
-                generateAsteroids(i, asteroidsLeft, asteroidsLeftValues);
-                generateAsteroidsLeftPosition(asteroidsLeft[i], asteroidsLeft, asteroidsLeftValues[i][2]);
-                asteroidsLeftIndex = i;
+                if (chosenLevel == 3 && distanceTraveled >= distanceGoal) {
+                    asteroidsLeft[i].setLayoutY(-1666);
+                }
+                
+                else {
+                    generateAsteroids(i, asteroidsLeft, asteroidsLeftValues);
+                    generateAsteroidsLeftPosition(asteroidsLeft[i], asteroidsLeft, asteroidsLeftValues[i][2]);
+                    asteroidsLeftIndex = i;
+                }
             }
             
-            else {
+            else if (asteroidsLeft[i].getLayoutY() != -1666) {
                 asteroidsLeft[i].setLayoutY(asteroidsLeft[i].getLayoutY() + asteroidsStep);
             }
         }
         
         for (int i = 0; i < asteroidsLeftEdge.length; i++) {
             if (asteroidsLeftEdge[i].getLayoutY() > 833) {
-                generateAsteroids(i, asteroidsLeftEdge, asteroidsLeftEdgeValues);
-                generateAsteroidsLeftEdgePosition(asteroidsLeftEdge[i], asteroidsLeftEdge, asteroidsLeftEdgeValues[i][2]);
-                asteroidsLeftEdgeIndex = i;
+                if (chosenLevel == 3 && distanceTraveled >= distanceGoal) {
+                    asteroidsLeftEdge[i].setLayoutY(-1666);
+                }
+                
+                else {
+                    generateAsteroids(i, asteroidsLeftEdge, asteroidsLeftEdgeValues);
+                    generateAsteroidsLeftEdgePosition(asteroidsLeftEdge[i], asteroidsLeftEdge, asteroidsLeftEdgeValues[i][2]);
+                    asteroidsLeftEdgeIndex = i;
+                }
             }
             
-            else {
+            else if (asteroidsLeftEdge[i].getLayoutY() != -1666) {
                 asteroidsLeftEdge[i].setLayoutY(asteroidsLeftEdge[i].getLayoutY() + asteroidsStep);
             }
         }
@@ -527,24 +548,36 @@ public class GameView {
         
         for (int i = 0; i < asteroidsRight.length; i++) {
             if (asteroidsRight[i].getLayoutY() > 833) {
-                generateAsteroids(i, asteroidsRight, asteroidsRightValues);
-                generateAsteroidsRightPosition(asteroidsRight[i], asteroidsRight, asteroidsRightValues[i][1], asteroidsRightValues[i][2]);
-                asteroidsRightIndex = i;
+                if (chosenLevel == 3 && distanceTraveled >= distanceGoal) {
+                    asteroidsRight[i].setLayoutY(-1666);
+                }
+                
+                else {
+                    generateAsteroids(i, asteroidsRight, asteroidsRightValues);
+                    generateAsteroidsRightPosition(asteroidsRight[i], asteroidsRight, asteroidsRightValues[i][1], asteroidsRightValues[i][2]);
+                    asteroidsRightIndex = i;
+                }
             }
             
-            else {
+            else if (asteroidsRight[i].getLayoutY() != -1666) {
                 asteroidsRight[i].setLayoutY(asteroidsRight[i].getLayoutY() + asteroidsStep);
             }
         }
         
         for (int i = 0; i < asteroidsRightEdge.length; i++) {
             if (asteroidsRightEdge[i].getLayoutY() > 833) {
-                generateAsteroids(i, asteroidsRightEdge, asteroidsRightEdgeValues);
-                generateAsteroidsRightEdgePosition(asteroidsRightEdge[i], asteroidsRightEdge, asteroidsRightEdgeValues[i][1], asteroidsRightEdgeValues[i][2]);
-                asteroidsRightEdgeIndex = i;
+                if (chosenLevel == 3 && distanceTraveled >= distanceGoal) {
+                    asteroidsRightEdge[i].setLayoutY(-1666);
+                }
+                
+                else {
+                    generateAsteroids(i, asteroidsRightEdge, asteroidsRightEdgeValues);
+                    generateAsteroidsRightEdgePosition(asteroidsRightEdge[i], asteroidsRightEdge, asteroidsRightEdgeValues[i][1], asteroidsRightEdgeValues[i][2]);
+                    asteroidsRightEdgeIndex = i;
+                }
             }
             
-            else {
+            else if (asteroidsRightEdge[i].getLayoutY() != -1666) {
                 asteroidsRightEdge[i].setLayoutY(asteroidsRightEdge[i].getLayoutY() + asteroidsStep);
             }
         }
@@ -597,8 +630,8 @@ public class GameView {
         }
         
         explosionsTimeline.setOnFinished(e -> {
-            for (int i = 0; i < explosions.length; i++) {
-                explosions[i].setLayoutY(-120);
+            for (ImageView explosion : explosions) {
+                explosion.setLayoutY(-120);
             }
         });
     }
@@ -636,13 +669,13 @@ public class GameView {
     private void animateShip() {
         ship = new ImageView(SHIP_SPRITE_IMAGES[0]);
         shipTimeline = new Timeline();
-        Collection<KeyFrame> shipFrames = shipTimeline.getKeyFrames();
+        Collection<KeyFrame> frames = shipTimeline.getKeyFrames();
         frameTime = Duration.ZERO;
         frameGap = Duration.millis(25);
         
         for (Image img : SHIP_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
-            shipFrames.add(new KeyFrame(frameTime, e -> ship.setImage(img)));
+            frames.add(new KeyFrame(frameTime, e -> ship.setImage(img)));
         }
         
         shipTimeline.setAutoReverse(true);
@@ -652,13 +685,13 @@ public class GameView {
     
     private void animateStars() {
         starsTimeline = new Timeline();
-        Collection<KeyFrame> starsFrames = starsTimeline.getKeyFrames();
+        Collection<KeyFrame> frames = starsTimeline.getKeyFrames();
         frameTime = Duration.ZERO;
         frameGap = Duration.millis(100);
         
         for (Image img : BLUE_STAR_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
-            starsFrames.add(new KeyFrame(frameTime, e -> {
+            frames.add(new KeyFrame(frameTime, e -> {
                 for (ImageView[] star : stars) {
                     star[0].setImage(img);
                 }
@@ -669,7 +702,7 @@ public class GameView {
         
         for (Image img : WHITE_STAR_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
-            starsFrames.add(new KeyFrame(frameTime, e -> {
+            frames.add(new KeyFrame(frameTime, e -> {
                 for (ImageView[] star : stars) {
                     star[1].setImage(img);
                 }
@@ -683,13 +716,13 @@ public class GameView {
     
     private void animateExplosions() {
         explosionsTimeline = new Timeline();
-        Collection<KeyFrame> explosionsFrames = explosionsTimeline.getKeyFrames();
+        Collection<KeyFrame> frames = explosionsTimeline.getKeyFrames();
         frameTime = Duration.ZERO;
         frameGap = Duration.millis(60);
         
         for (Image img : EXPLOSION_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
-            explosionsFrames.add(new KeyFrame(frameTime, e -> {
+            frames.add(new KeyFrame(frameTime, e -> {
                 explosions[0].setImage(img);
                 explosions[0].setFitWidth(120);
                 explosions[0].setFitHeight(120);
@@ -700,14 +733,14 @@ public class GameView {
         
         for (Image img : EXPLOSION_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
-            explosionsFrames.add(new KeyFrame(frameTime, e -> explosions[1].setImage(img)));
+            frames.add(new KeyFrame(frameTime, e -> explosions[1].setImage(img)));
         }
         
         frameTime = Duration.ZERO;
         
         for (Image img : EXPLOSION_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
-            explosionsFrames.add(new KeyFrame(frameTime, e -> {
+            frames.add(new KeyFrame(frameTime, e -> {
                 explosions[2].setImage(img);
                 explosions[2].setFitWidth(30);
                 explosions[2].setFitHeight(30);
@@ -718,7 +751,7 @@ public class GameView {
         
         for (Image img : EXPLOSION_SPRITE_IMAGES) {
             frameTime = frameTime.add(frameGap);
-            explosionsFrames.add(new KeyFrame(frameTime, e -> {
+            frames.add(new KeyFrame(frameTime, e -> {
                 explosions[3].setImage(img);
                 explosions[3].setFitWidth(20);
                 explosions[3].setFitHeight(20);
@@ -920,6 +953,32 @@ public class GameView {
             }
         }
         
+        if (chosenLevel == 3) {
+            for (ImageView asteroid : asteroidsLeft) {
+                if (asteroid.getLayoutY() != -1666) {
+                    levelCleared = false;
+                }
+            }
+            
+            for (ImageView asteroid : asteroidsLeftEdge) {
+                if (asteroid.getLayoutY() != -1666) {
+                    levelCleared = false;
+                }
+            }
+            
+            for (ImageView asteroid : asteroidsRight) {
+                if (asteroid.getLayoutY() != -1666) {
+                    levelCleared = false;
+                }
+            }
+            
+            for (ImageView asteroid : asteroidsRightEdge) {
+                if (asteroid.getLayoutY() != -1666) {
+                    levelCleared = false;
+                }
+            }
+        }
+        
         if (levelCleared) {
             gameAnimationTimer.stop();
             
@@ -928,8 +987,8 @@ public class GameView {
                 shipTimeline.stop();
                 starsTimeline.stop();
                 asteroidsAnimationTimer.stop();
-                gameStage.hide();
                 nextLevelButton.setDisable(false);
+                gameStage.hide();
                 menuStage.show();
             });
             

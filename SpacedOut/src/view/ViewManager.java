@@ -75,25 +75,19 @@ public class ViewManager {
     
     private void createMenuSubScenes() {
         createStartSubScene();
-        
-        optionsSubScene = new MenuSubScene(600, 400, 226.75);
-        root.getChildren().add(optionsSubScene);
-        
-        helpSubScene = new MenuSubScene(600, 400, 226.75);
-        root.getChildren().add(helpSubScene);
-        
-        creditsSubScene = new MenuSubScene(600, 400, 226.75);
-        root.getChildren().add(creditsSubScene);
+        createOptionsSubScene();
+        createHelpSubScene();
+        createCreditsSubScene();
     }
     
     private void createStartSubScene() {
         startSubScene = new MenuSubScene(600, 400, 226.75);
         root.getChildren().add(startSubScene);
         
-        MenuLabel startLabel = new MenuLabel("CHOOSE LEVEL", 23, 380, 49);
-        startLabel.setLayoutX(110);
-        startLabel.setLayoutY(37.25);
-        startSubScene.getPane().getChildren().add(startLabel);
+        MenuLabel headerLabel = new MenuLabel("CHOOSE A LEVEL", 23, 380, 49, -2);
+        headerLabel.setLayoutX(110);
+        headerLabel.setLayoutY(37.25);
+        startSubScene.getPane().getChildren().add(headerLabel);
         
         createLevel1Button();
         createLevel2Button();
@@ -104,14 +98,14 @@ public class ViewManager {
         level1Button = new PanelButton("", 0, 147, 147);
         level1Button.setGraphic(new ImageView("view/assets/numeral1.png"));
         level1Button.setLayoutX(39.75);
-        level1Button.setLayoutY(157.75);
+        level1Button.setLayoutY(147.75);
         startSubScene.getPane().getChildren().add(level1Button);
         
         level1Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                GameView level1 = new GameView();
-                level1.createNewGame(mainStage, 1, level2Button);
+                GameView level = new GameView();
+                level.createNewGame(mainStage, 1, level2Button);
             }
         });
     }
@@ -121,14 +115,14 @@ public class ViewManager {
         level2Button.setGraphic(new ImageView("view/assets/numeral2.png"));
         level2Button.setDisable(true);
         level2Button.setLayoutX(226.5);
-        level2Button.setLayoutY(157.75);
+        level2Button.setLayoutY(147.75);
         startSubScene.getPane().getChildren().add(level2Button);
         
         level2Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                GameView level2 = new GameView();
-                level2.createNewGame(mainStage, 2, level3Button);
+                GameView level = new GameView();
+                level.createNewGame(mainStage, 2, level3Button);
             }
         });
     }
@@ -138,16 +132,71 @@ public class ViewManager {
         level3Button.setGraphic(new ImageView("view/assets/numeral3.png"));
         level3Button.setDisable(true);
         level3Button.setLayoutX(413.25);
-        level3Button.setLayoutY(157.75);
+        level3Button.setLayoutY(147.75);
         startSubScene.getPane().getChildren().add(level3Button);
         
         level3Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                GameView level3 = new GameView();
-                level3.createNewGame(mainStage, 3, level1Button);
+                GameView level = new GameView();
+                level.createNewGame(mainStage, 3, level1Button);
             }
         });
+    }
+    
+    private void createOptionsSubScene() {
+        optionsSubScene = new MenuSubScene(600, 400, 226.75);
+        root.getChildren().add(optionsSubScene);
+        
+        MenuLabel headerLabel1 = new MenuLabel("MUSIC", 23, 210, 49, -2);
+        headerLabel1.setLayoutX(60);
+        headerLabel1.setLayoutY(37.25);
+        optionsSubScene.getPane().getChildren().add(headerLabel1);
+        
+        MenuLabel headerLabel2 = new MenuLabel("CONTROLS", 23, 210, 49, -2);
+        headerLabel2.setLayoutX(330);
+        headerLabel2.setLayoutY(37.25);
+        optionsSubScene.getPane().getChildren().add(headerLabel2);
+    }
+    
+    private void createHelpSubScene() {
+        helpSubScene = new MenuSubScene(600, 400, 226.75);
+        root.getChildren().add(helpSubScene);
+        
+        MenuLabel headerLabel = new MenuLabel("OBJECTIVE", 23, 380, 49, -2);
+        headerLabel.setLayoutX(110);
+        headerLabel.setLayoutY(37.25);
+        helpSubScene.getPane().getChildren().add(headerLabel);
+        
+        MenuLabel bodyLabel = new MenuLabel("YOU'RE THE PILOT OF A SHIP TRAVELING IN SPACE.\n\nHOWEVER, YOU LATER FIND YOURSELF TRAPPED\nINSIDE AN ASTEROID BELT.\n\nAVOID THE ASTEROIDS AS YOU FIND YOUR WAY OUT.", 15, 516, 180, -16);
+        bodyLabel.setLayoutX(42);
+        bodyLabel.setLayoutY(123.5);
+        helpSubScene.getPane().getChildren().add(bodyLabel);
+    }
+    
+    private void createCreditsSubScene() {
+        creditsSubScene = new MenuSubScene(600, 400, 226.75);
+        root.getChildren().add(creditsSubScene);
+        
+        MenuLabel headerLabel1 = new MenuLabel("REFERENCES", 23, 210, 49, -2);
+        headerLabel1.setLayoutX(60);
+        headerLabel1.setLayoutY(37.25);
+        creditsSubScene.getPane().getChildren().add(headerLabel1);
+        
+        MenuLabel headerLabel2 = new MenuLabel("LINKS", 23, 210, 49, -2);
+        headerLabel2.setLayoutX(330);
+        headerLabel2.setLayoutY(37.25);
+        creditsSubScene.getPane().getChildren().add(headerLabel2);
+        
+        MenuLabel bodyLabel1 = new MenuLabel("THIS PROJECT WAS\nINSPIRED BY A GAME\nMADE BY JAVACRAVING.\n\nASSETS USED ARE\nOBTAINED FROM KENNEY\nASSETS AND OPEN\nGAMEART.ORG.", 13, 240, 200, -20);
+        bodyLabel1.setLayoutX(45);
+        bodyLabel1.setLayoutY(112.75);
+        creditsSubScene.getPane().getChildren().add(bodyLabel1);
+        
+        MenuLabel bodyLabel2 = new MenuLabel("youtu.be/DkIuA5ZEZ_U\n\nkenney.nl/assets?q=ui\n\nopengameart.org/\ncontent/i-are-\nspaceship-16x16-\nspace-sprites", 13, 240, 200, -20);
+        bodyLabel2.setLayoutX(315);
+        bodyLabel2.setLayoutY(112.75);
+        creditsSubScene.getPane().getChildren().add(bodyLabel2);
     }
     
     public Stage getMainStage() {
@@ -183,52 +232,52 @@ public class ViewManager {
     }
     
     private void createOptionsButton() {
-        MenuButton optionsButton = new MenuButton("OPTIONS");
-        addMenuButton(optionsButton);
+        MenuButton primaryButton = new MenuButton("OPTIONS");
+        addMenuButton(primaryButton);
         
-        optionsButton.setOnAction(new EventHandler<ActionEvent>() {
+        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                setActiveButton(optionsButton);
+                setActiveButton(primaryButton);
                 setActiveSubScene(optionsSubScene);
             }
         });
     }
     
     private void createHelpButton() {
-        MenuButton helpButton = new MenuButton("HELP");
-        addMenuButton(helpButton);
+        MenuButton primaryButton = new MenuButton("HELP");
+        addMenuButton(primaryButton);
         
-        helpButton.setOnAction(new EventHandler<ActionEvent>() {
+        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                setActiveButton(helpButton);
+                setActiveButton(primaryButton);
                 setActiveSubScene(helpSubScene);
             }
         });
     }
     
     private void createCreditsButton() {
-        MenuButton creditsButton = new MenuButton("CREDITS");
-        addMenuButton(creditsButton);
+        MenuButton primaryButton = new MenuButton("CREDITS");
+        addMenuButton(primaryButton);
         
-        creditsButton.setOnAction(new EventHandler<ActionEvent>() {
+        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                setActiveButton(creditsButton);
+                setActiveButton(primaryButton);
                 setActiveSubScene(creditsSubScene);
             }
         });
     }
     
     private void createExitButton() {
-        MenuButton exitButton = new MenuButton("EXIT");
-        addMenuButton(exitButton);
+        MenuButton primaryButton = new MenuButton("EXIT");
+        addMenuButton(primaryButton);
         
-        exitButton.setOnAction(new EventHandler<ActionEvent>() {
+        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                setActiveButton(exitButton);
+                setActiveButton(primaryButton);
                 mainStage.close();
             }
         });
