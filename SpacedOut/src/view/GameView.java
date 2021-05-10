@@ -495,89 +495,75 @@ public class GameView {
     private void spawnAsteroids() {
         for (int i = 0; i < asteroidsLeft.length; i++) {
             if (asteroidsLeft[i].getLayoutY() > 833) {
-                if (chosenLevel == 3 && distanceTraveled >= distanceGoal) {
-                    asteroidsLeft[i].setLayoutY(-1666);
-                }
-                
-                else {
-                    generateAsteroids(i, asteroidsLeft, asteroidsLeftValues);
-                    generateAsteroidsLeftPosition(asteroidsLeft[i], asteroidsLeft, asteroidsLeftValues[i][2]);
-                    asteroidsLeftIndex = i;
-                }
+                generateAsteroids(i, asteroidsLeft, asteroidsLeftValues);
+                generateAsteroidsLeftPosition(asteroidsLeft[i], asteroidsLeft, asteroidsLeftValues[i][2]);
+                asteroidsLeftIndex = i;
             }
             
-            else if (asteroidsLeft[i].getLayoutY() != -1666) {
+            else if (chosenLevel != 3 || distanceTraveled < distanceGoal) {
+                asteroidsLeft[i].setLayoutY(asteroidsLeft[i].getLayoutY() + asteroidsStep);
+            }
+            
+            else if (asteroidsLeft[i].getLayoutY() > -65) {
                 asteroidsLeft[i].setLayoutY(asteroidsLeft[i].getLayoutY() + asteroidsStep);
             }
         }
         
         for (int i = 0; i < asteroidsLeftEdge.length; i++) {
             if (asteroidsLeftEdge[i].getLayoutY() > 833) {
-                if (chosenLevel == 3 && distanceTraveled >= distanceGoal) {
-                    asteroidsLeftEdge[i].setLayoutY(-1666);
-                }
-                
-                else {
-                    generateAsteroids(i, asteroidsLeftEdge, asteroidsLeftEdgeValues);
-                    generateAsteroidsLeftEdgePosition(asteroidsLeftEdge[i], asteroidsLeftEdge, asteroidsLeftEdgeValues[i][2]);
-                    asteroidsLeftEdgeIndex = i;
-                }
+                generateAsteroids(i, asteroidsLeftEdge, asteroidsLeftEdgeValues);
+                generateAsteroidsLeftEdgePosition(asteroidsLeftEdge[i], asteroidsLeftEdge, asteroidsLeftEdgeValues[i][2]);
+                asteroidsLeftEdgeIndex = i;
             }
             
-            else if (asteroidsLeftEdge[i].getLayoutY() != -1666) {
+            else if (chosenLevel != 3 || distanceTraveled < distanceGoal) {
+                asteroidsLeftEdge[i].setLayoutY(asteroidsLeftEdge[i].getLayoutY() + asteroidsStep);
+            }
+            
+            else if (asteroidsLeftEdge[i].getLayoutY() > -65) {
                 asteroidsLeftEdge[i].setLayoutY(asteroidsLeftEdge[i].getLayoutY() + asteroidsStep);
             }
         }
         
         for (int i = 0; i < asteroidsMiddle.length; i++) {
             if (asteroidsMiddle[i].getLayoutY() > 833) {
-                if (distanceTraveled >= distanceGoal) {
-                    asteroidsMiddle[i].setLayoutY(-1666);
-                }
-                
-                else {
-                    generateAsteroids(i, asteroidsMiddle, asteroidsMiddleValues);
-                    generateAsteroidsMiddlePosition(asteroidsMiddle[i], asteroidsMiddleValues[i][1]);
-                }
+                generateAsteroids(i, asteroidsMiddle, asteroidsMiddleValues);
+                generateAsteroidsMiddlePosition(asteroidsMiddle[i], asteroidsMiddleValues[i][1]);
             }
             
-            else if (asteroidsMiddle[i].getLayoutY() != -1666) {
+            else if (asteroidsMiddle[i].getLayoutY() > -65 || distanceTraveled < distanceGoal) {
                 asteroidsMiddle[i].setLayoutY(asteroidsMiddle[i].getLayoutY() + asteroidsStep);
             }
         }
         
         for (int i = 0; i < asteroidsRight.length; i++) {
             if (asteroidsRight[i].getLayoutY() > 833) {
-                if (chosenLevel == 3 && distanceTraveled >= distanceGoal) {
-                    asteroidsRight[i].setLayoutY(-1666);
-                }
-                
-                else {
-                    generateAsteroids(i, asteroidsRight, asteroidsRightValues);
-                    generateAsteroidsRightPosition(asteroidsRight[i], asteroidsRight, asteroidsRightValues[i][1], asteroidsRightValues[i][2]);
-                    asteroidsRightIndex = i;
-                }
+                generateAsteroids(i, asteroidsRight, asteroidsRightValues);
+                generateAsteroidsRightPosition(asteroidsRight[i], asteroidsRight, asteroidsRightValues[i][1], asteroidsRightValues[i][2]);
+                asteroidsRightIndex = i;
             }
             
-            else if (asteroidsRight[i].getLayoutY() != -1666) {
+            else if (chosenLevel != 3 || distanceTraveled < distanceGoal) {
+                asteroidsRight[i].setLayoutY(asteroidsRight[i].getLayoutY() + asteroidsStep);
+            }
+            
+            else if (asteroidsRight[i].getLayoutY() > -65) {
                 asteroidsRight[i].setLayoutY(asteroidsRight[i].getLayoutY() + asteroidsStep);
             }
         }
         
         for (int i = 0; i < asteroidsRightEdge.length; i++) {
             if (asteroidsRightEdge[i].getLayoutY() > 833) {
-                if (chosenLevel == 3 && distanceTraveled >= distanceGoal) {
-                    asteroidsRightEdge[i].setLayoutY(-1666);
-                }
-                
-                else {
-                    generateAsteroids(i, asteroidsRightEdge, asteroidsRightEdgeValues);
-                    generateAsteroidsRightEdgePosition(asteroidsRightEdge[i], asteroidsRightEdge, asteroidsRightEdgeValues[i][1], asteroidsRightEdgeValues[i][2]);
-                    asteroidsRightEdgeIndex = i;
-                }
+                generateAsteroids(i, asteroidsRightEdge, asteroidsRightEdgeValues);
+                generateAsteroidsRightEdgePosition(asteroidsRightEdge[i], asteroidsRightEdge, asteroidsRightEdgeValues[i][1], asteroidsRightEdgeValues[i][2]);
+                asteroidsRightEdgeIndex = i;
             }
             
-            else if (asteroidsRightEdge[i].getLayoutY() != -1666) {
+            else if (chosenLevel != 3 || distanceTraveled < distanceGoal) {
+                asteroidsRightEdge[i].setLayoutY(asteroidsRightEdge[i].getLayoutY() + asteroidsStep);
+            }
+            
+            else if (asteroidsRightEdge[i].getLayoutY() > -65) {
                 asteroidsRightEdge[i].setLayoutY(asteroidsRightEdge[i].getLayoutY() + asteroidsStep);
             }
         }
@@ -593,15 +579,14 @@ public class GameView {
         ship.setLayoutY(GAME_HEIGHT);
         ship.setVisible(true);
         
-        TranslateTransition shipTranslateTransition = new TranslateTransition(Duration.millis(2500), ship);
-        shipTranslateTransition.setToY(-120);
-        shipTranslateTransition.setOnFinished(e -> {
-            shipTranslateTransition.stop();
+        TranslateTransition transition = new TranslateTransition(Duration.millis(2500), ship);
+        transition.setToY(-120);
+        transition.setOnFinished(e -> {
             ship.setLayoutY(ship.getLayoutY() + ship.getTranslateY());
             ship.setTranslateY(0);
             gameAnimationTimer.start();
         });
-        shipTranslateTransition.play();
+        transition.play();
     }
     
     private void generateAsteroids(int index, ImageView[] asteroids, double[][] asteroidsValues) {
@@ -638,7 +623,7 @@ public class GameView {
     
     private void generateStarsPosition(ImageView image) {
         image.setLayoutX(gameRandom.nextInt(990));
-        image.setLayoutY(- (gameRandom.nextInt(769) + 35));
+        image.setLayoutY(-(gameRandom.nextInt(769) + 35));
     }
     
     private void generateAsteroidsLeftPosition(ImageView image, ImageView[] images, double halfHeight) {
@@ -653,7 +638,7 @@ public class GameView {
     
     private void generateAsteroidsMiddlePosition(ImageView image, double halfWidth) {
         image.setLayoutX(ThreadLocalRandom.current().nextInt(241, (int) (710 - halfWidth * 2)));
-        image.setLayoutY(- (gameRandom.nextInt(1601) + 65));
+        image.setLayoutY(-(gameRandom.nextInt(1601) + 65));
     }
     
     private void generateAsteroidsRightPosition(ImageView image, ImageView[] images, double halfWidth, double halfHeight) {
@@ -947,33 +932,37 @@ public class GameView {
     private void checkLevelCleared() {
         boolean levelCleared = true;
         
+        if (distanceTraveled < distanceGoal) {
+            levelCleared = false;
+        }
+        
         for (ImageView asteroid : asteroidsMiddle) {
-            if (asteroid.getLayoutY() != -1666) {
+            if (asteroid.getLayoutY() > -65) {
                 levelCleared = false;
             }
         }
         
         if (chosenLevel == 3) {
             for (ImageView asteroid : asteroidsLeft) {
-                if (asteroid.getLayoutY() != -1666) {
+                if (asteroid.getLayoutY() > -65) {
                     levelCleared = false;
                 }
             }
             
             for (ImageView asteroid : asteroidsLeftEdge) {
-                if (asteroid.getLayoutY() != -1666) {
+                if (asteroid.getLayoutY() > -65) {
                     levelCleared = false;
                 }
             }
             
             for (ImageView asteroid : asteroidsRight) {
-                if (asteroid.getLayoutY() != -1666) {
+                if (asteroid.getLayoutY() > -65) {
                     levelCleared = false;
                 }
             }
             
             for (ImageView asteroid : asteroidsRightEdge) {
-                if (asteroid.getLayoutY() != -1666) {
+                if (asteroid.getLayoutY() > -65) {
                     levelCleared = false;
                 }
             }
