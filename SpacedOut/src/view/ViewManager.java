@@ -6,13 +6,17 @@
 package view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import model.ControlsButton;
 import model.MenuButton;
 import model.MenuLabel;
 import model.MenuSubScene;
@@ -35,6 +39,8 @@ public class ViewManager {
     private PanelButton level1Button;
     private PanelButton level2Button;
     private PanelButton level3Button;
+    private KeyCode[] keybinds;
+    private ControlsButton toDeselect;
     private MenuSubScene startSubScene;
     private MenuSubScene optionsSubScene;
     private MenuSubScene helpSubScene;
@@ -48,6 +54,11 @@ public class ViewManager {
         mainStage = new Stage();
         mainStage.setScene(mainScene);
         menuButtons = new ArrayList<>();
+        keybinds = new KeyCode[4];
+        keybinds[0] = KeyCode.A;
+        keybinds[1] = KeyCode.S;
+        keybinds[2] = KeyCode.D;
+        keybinds[3] = KeyCode.F;
         createMenuButtons();
         createLogo();
         createMenuSubScenes();
@@ -69,8 +80,22 @@ public class ViewManager {
             toHide.moveSubScene(-678);
         }
         
+        if (toHide == optionsSubScene && toDeselect != null) {
+            toDeselect.moveButton();
+            toDeselect = null;
+        }
+        
         subScene.moveSubScene(-678);
         toHide = subScene;
+    }
+    
+    private void setSelectedButton(ControlsButton button) {
+        if (toDeselect != null) {
+            toDeselect.moveButton();
+        }
+        
+        button.moveButton();
+        toDeselect = button;
     }
     
     private void createMenuSubScenes() {
@@ -105,7 +130,7 @@ public class ViewManager {
             @Override
             public void handle(ActionEvent t) {
                 GameView level = new GameView();
-                level.createNewGame(mainStage, 1, level2Button);
+                level.createNewGame(mainStage, keybinds, 1, level2Button);
             }
         });
     }
@@ -122,7 +147,7 @@ public class ViewManager {
             @Override
             public void handle(ActionEvent t) {
                 GameView level = new GameView();
-                level.createNewGame(mainStage, 2, level3Button);
+                level.createNewGame(mainStage, keybinds, 2, level3Button);
             }
         });
     }
@@ -139,7 +164,7 @@ public class ViewManager {
             @Override
             public void handle(ActionEvent t) {
                 GameView level = new GameView();
-                level.createNewGame(mainStage, 3, level1Button);
+                level.createNewGame(mainStage, keybinds, 3, level1Button);
             }
         });
     }
@@ -157,6 +182,107 @@ public class ViewManager {
         headerLabel2.setLayoutX(330);
         headerLabel2.setLayoutY(37.25);
         optionsSubScene.getPane().getChildren().add(headerLabel2);
+        
+        createMovement1Button();
+        createMovement2Button();
+        createMovement3Button();
+        createMovement4Button();
+    }
+    
+    private void createMovement1Button() {
+        ControlsButton smallButton = new ControlsButton(keybinds[0].getName());
+        smallButton.setLayoutX(315);
+        smallButton.setLayoutY(112.75);
+        optionsSubScene.getPane().getChildren().add(smallButton);
+        
+        smallButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setSelectedButton(smallButton);
+            }
+        });
+        
+        smallButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (toDeselect == smallButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
+                    keybinds[0] = t.getCode();
+                    smallButton.setText(t.getText());
+                }
+            }
+        });
+    }
+    
+    private void createMovement2Button() {
+        ControlsButton smallButton = new ControlsButton(keybinds[1].getName());
+        smallButton.setLayoutX(457);
+        smallButton.setLayoutY(112.75);
+        optionsSubScene.getPane().getChildren().add(smallButton);
+        
+        smallButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setSelectedButton(smallButton);
+            }
+        });
+        
+        smallButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (toDeselect == smallButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
+                    keybinds[1] = t.getCode();
+                    smallButton.setText(t.getText());
+                }
+            }
+        });
+    }
+    
+    private void createMovement3Button() {
+        ControlsButton smallButton = new ControlsButton(keybinds[2].getName());
+        smallButton.setLayoutX(315);
+        smallButton.setLayoutY(254.75);
+        optionsSubScene.getPane().getChildren().add(smallButton);
+        
+        smallButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setSelectedButton(smallButton);
+            }
+        });
+        
+        smallButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (toDeselect == smallButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
+                    keybinds[2] = t.getCode();
+                    smallButton.setText(t.getText());
+                }
+            }
+        });
+    }
+    
+    private void createMovement4Button() {
+        ControlsButton smallButton = new ControlsButton(keybinds[3].getName());
+        smallButton.setLayoutX(457);
+        smallButton.setLayoutY(254.75);
+        optionsSubScene.getPane().getChildren().add(smallButton);
+        
+        smallButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setSelectedButton(smallButton);
+            }
+        });
+        
+        smallButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent t) {
+                if (toDeselect == smallButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
+                    keybinds[3] = t.getCode();
+                    smallButton.setText(t.getText());
+                }
+            }
+        });
     }
     
     private void createHelpSubScene() {

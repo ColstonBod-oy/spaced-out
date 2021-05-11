@@ -19,6 +19,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
@@ -80,10 +81,10 @@ public class GameView {
     private Timeline explosionsTimeline;
     private Duration frameTime;
     private Duration frameGap;
-    private boolean isAKeyPressed;
-    private boolean isSKeyPressed;
-    private boolean isDKeyPressed;
-    private boolean isFKeyPressed;
+    private boolean isUpLeftPressed;
+    private boolean isUpRightPressed;
+    private boolean isDownLeftPressed;
+    private boolean isDownRightPressed;
     private ImageView ship;
     private ImageView[] asteroidsLeft;
     private ImageView[] asteroidsLeftEdge;
@@ -111,6 +112,7 @@ public class GameView {
     private int starsStep;
     private int asteroidsStep;
     private Stage menuStage;
+    private KeyCode[] keybinds;
     private int chosenLevel;
     private PanelButton nextLevelButton;
     
@@ -132,21 +134,20 @@ public class GameView {
         gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if (null != t.getCode()) switch (t.getCode()) {
-                    case A:
-                        isAKeyPressed = true;
-                        break;
-                        
-                    case S:
-                        isSKeyPressed = true;
-                        break;
-                        
-                    case D:
-                        isDKeyPressed = true;
-                        break;
-                        
-                    case F:
-                        isFKeyPressed = true;
+                if (keybinds[0].equals(t.getCode())) {
+                    isUpLeftPressed = true;
+                }
+                
+                else if (keybinds[1].equals(t.getCode())) {
+                    isUpRightPressed = true;
+                }
+                
+                else if (keybinds[2].equals(t.getCode())) {
+                    isDownLeftPressed = true;
+                }
+                
+                else if (keybinds[3].equals(t.getCode())) {
+                    isDownRightPressed = true;
                 }
             }
         });
@@ -154,28 +155,28 @@ public class GameView {
         gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if (null != t.getCode()) switch (t.getCode()) {
-                    case A:
-                        isAKeyPressed = false;
-                        break;
-                        
-                    case S:
-                        isSKeyPressed = false;
-                        break;
-                        
-                    case D:
-                        isDKeyPressed = false;
-                        break;
-                        
-                    case F:
-                        isFKeyPressed = false;
+                if (keybinds[0].equals(t.getCode())) {
+                    isUpLeftPressed = false;
+                }
+                
+                else if (keybinds[1].equals(t.getCode())) {
+                    isUpRightPressed = false;
+                }
+                
+                else if (keybinds[2].equals(t.getCode())) {
+                    isDownLeftPressed = false;
+                }
+                
+                else if (keybinds[3].equals(t.getCode())) {
+                    isDownRightPressed = false;
                 }
             }
         });
     }
     
-    public void createNewGame(Stage menuStage, int chosenLevel, PanelButton nextLevelButton) {
+    public void createNewGame(Stage menuStage, KeyCode[] keybinds, int chosenLevel, PanelButton nextLevelButton) {
         this.menuStage = menuStage;
+        this.keybinds = keybinds;
         this.chosenLevel = chosenLevel;
         this.nextLevelButton = nextLevelButton;
         this.menuStage.hide();
@@ -748,7 +749,7 @@ public class GameView {
     }
     
     private void moveShip() {
-        if (isAKeyPressed && !isSKeyPressed && !isDKeyPressed && !isFKeyPressed) {
+        if (isUpLeftPressed && !isUpRightPressed && !isDownLeftPressed && !isDownRightPressed) {
             if (shipAngle > -30) {
                 shipAngle -= 5;
             }
@@ -768,7 +769,7 @@ public class GameView {
             }
         }
         
-        else if (!isAKeyPressed && isSKeyPressed && !isDKeyPressed && !isFKeyPressed) {
+        else if (!isUpLeftPressed && isUpRightPressed && !isDownLeftPressed && !isDownRightPressed) {
             if (shipAngle < 30) {
                 shipAngle += 5;
             }
@@ -788,7 +789,7 @@ public class GameView {
             }
         }
         
-        else if (!isAKeyPressed && !isSKeyPressed && isDKeyPressed && !isFKeyPressed) {
+        else if (!isUpLeftPressed && !isUpRightPressed && isDownLeftPressed && !isDownRightPressed) {
             if (shipAngle > -150) {
                 shipAngle -= 5;
             }
@@ -804,7 +805,7 @@ public class GameView {
             }
         }
         
-        else if (!isAKeyPressed && !isSKeyPressed && !isDKeyPressed && isFKeyPressed) {
+        else if (!isUpLeftPressed && !isUpRightPressed && !isDownLeftPressed && isDownRightPressed) {
             if (shipAngle < 150) {
                 shipAngle += 5;
             }
