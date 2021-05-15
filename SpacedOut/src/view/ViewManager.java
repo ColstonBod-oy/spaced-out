@@ -191,8 +191,8 @@ public class ViewManager {
     
     private void createMovement1Button() {
         ControlsButton smallButton = new ControlsButton(keybinds[0].getName());
-        smallButton.setLayoutX(315);
-        smallButton.setLayoutY(112.75);
+        smallButton.setLayoutX(325);
+        smallButton.setLayoutY(122.75);
         optionsSubScene.getPane().getChildren().add(smallButton);
         
         smallButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -215,8 +215,8 @@ public class ViewManager {
     
     private void createMovement2Button() {
         ControlsButton smallButton = new ControlsButton(keybinds[1].getName());
-        smallButton.setLayoutX(457);
-        smallButton.setLayoutY(112.75);
+        smallButton.setLayoutX(447);
+        smallButton.setLayoutY(122.75);
         optionsSubScene.getPane().getChildren().add(smallButton);
         
         smallButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -239,8 +239,8 @@ public class ViewManager {
     
     private void createMovement3Button() {
         ControlsButton smallButton = new ControlsButton(keybinds[2].getName());
-        smallButton.setLayoutX(315);
-        smallButton.setLayoutY(254.75);
+        smallButton.setLayoutX(325);
+        smallButton.setLayoutY(244.75);
         optionsSubScene.getPane().getChildren().add(smallButton);
         
         smallButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -263,8 +263,8 @@ public class ViewManager {
     
     private void createMovement4Button() {
         ControlsButton smallButton = new ControlsButton(keybinds[3].getName());
-        smallButton.setLayoutX(457);
-        smallButton.setLayoutY(254.75);
+        smallButton.setLayoutX(447);
+        smallButton.setLayoutY(244.75);
         optionsSubScene.getPane().getChildren().add(smallButton);
         
         smallButton.setOnAction(new EventHandler<ActionEvent>() {
