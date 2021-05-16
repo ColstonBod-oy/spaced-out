@@ -99,15 +99,16 @@ public class GameView {
     private int backgroundStep;
     private int asteroidsStep;
     private Stage menuStage;
+    private AnchorPaneBackground menuBackground;
     private KeyCode[] keybinds;
     private int chosenLevel;
     private PanelButton nextLevelButton;
     
     public GameView() {
-        gameRandom = new Random();
-        gameBackground = new AnchorPaneBackground();
         initStage();
         initKeyListeners();
+        gameRandom = new Random();
+        gameBackground = new AnchorPaneBackground();
     }
     
     private void initStage() {
@@ -174,8 +175,9 @@ public class GameView {
         return backgroundStep;
     }
     
-    public void createNewGame(Stage menuStage, KeyCode[] keybinds, int chosenLevel, PanelButton nextLevelButton) {
+    public void createNewGame(Stage menuStage, AnchorPaneBackground menuBackground, KeyCode[] keybinds, int chosenLevel, PanelButton nextLevelButton) {
         this.menuStage = menuStage;
+        this.menuBackground = menuBackground;
         this.keybinds = keybinds;
         this.chosenLevel = chosenLevel;
         this.nextLevelButton = nextLevelButton;
@@ -198,13 +200,15 @@ public class GameView {
             backgroundStep = 2;
             asteroidsStep = 7;
             gameBackground.createNewBackground(this);
+            gameBackground.setBackground(1);
         }
         
         else if (chosenLevel == 2) {
             distanceGoal = 200;
-            backgroundStep = 5;
+            backgroundStep = 6;
             asteroidsStep = 10;
             gameBackground.createNewBackground(this);
+            gameBackground.setBackground(2);
         }
         
         else {
@@ -212,6 +216,7 @@ public class GameView {
             backgroundStep = 8;
             asteroidsStep = 13;
             gameBackground.createNewBackground(this);
+            gameBackground.setBackground(3);
         }
         
         createShip();
@@ -435,6 +440,9 @@ public class GameView {
                 shipTimeline.stop();
                 gameBackground.stopStarsTimeline();
                 asteroidsAnimationTimer.stop();
+                menuBackground.setBackground(chosenLevel);
+                menuBackground.startBackgroundAnimationTimer();
+                menuBackground.playStarsTimeline();
                 gameStage.hide();
                 menuStage.show();
             }
@@ -770,7 +778,7 @@ public class GameView {
                 }
                 
                 else {
-                    ship.setLayoutY(ship.getLayoutY() + backgroundStep);
+                    ship.setLayoutY(ship.getLayoutY() + backgroundStep + 1);
                 }
             }
         }
@@ -910,6 +918,9 @@ public class GameView {
                 shipTimeline.stop();
                 gameBackground.stopStarsTimeline();
                 asteroidsAnimationTimer.stop();
+                menuBackground.setBackground(chosenLevel);
+                menuBackground.startBackgroundAnimationTimer();
+                menuBackground.playStarsTimeline();
                 nextLevelButton.setDisable(false);
                 gameStage.hide();
                 menuStage.show();

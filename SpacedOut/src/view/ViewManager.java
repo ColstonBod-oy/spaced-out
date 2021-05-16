@@ -16,6 +16,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import model.AnchorPaneBackground;
 import model.ControlsButton;
 import model.MenuButton;
 import model.MenuLabel;
@@ -33,6 +34,7 @@ public class ViewManager {
     private AnchorPane root;
     private Scene mainScene;
     private Stage mainStage;
+    private AnchorPaneBackground mainBackground;
     private List<MenuButton> menuButtons;
     private MenuButton startButton;
     private MenuButton toDeactivate;
@@ -53,12 +55,14 @@ public class ViewManager {
         mainScene = new Scene(root, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene);
+        mainBackground = new AnchorPaneBackground();
         menuButtons = new ArrayList<>();
         keybinds = new KeyCode[4];
         keybinds[0] = KeyCode.A;
         keybinds[1] = KeyCode.S;
         keybinds[2] = KeyCode.D;
         keybinds[3] = KeyCode.F;
+        createMenuBackground();
         createMenuButtons();
         createLogo();
         createMenuSubScenes();
@@ -98,6 +102,102 @@ public class ViewManager {
         toDeselect = button;
     }
     
+    public Stage getMainStage() {
+        return mainStage;
+    }
+    
+    private void addMenuButton(MenuButton button) {
+        button.setLayoutX(78);
+        button.setLayoutY(202.25 + menuButtons.size() * 100);
+        menuButtons.add(button);
+        root.getChildren().add(button);
+    }
+    
+    private void createMenuBackground() {
+        int step = 1;
+        mainBackground.createNewBackground(root, step);
+    }
+    
+    private void createMenuButtons() {
+        createStartButton();
+        createOptionsButton();
+        createHelpButton();
+        createCreditsButton();
+        createExitButton();
+    }
+    
+    private void createStartButton() {
+        startButton = new MenuButton("START");
+        addMenuButton(startButton);
+        
+        startButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setActiveButton(startButton);
+                setActiveSubScene(startSubScene);
+            }
+        });
+    }
+    
+    private void createOptionsButton() {
+        MenuButton primaryButton = new MenuButton("OPTIONS");
+        addMenuButton(primaryButton);
+        
+        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setActiveButton(primaryButton);
+                setActiveSubScene(optionsSubScene);
+            }
+        });
+    }
+    
+    private void createHelpButton() {
+        MenuButton primaryButton = new MenuButton("HELP");
+        addMenuButton(primaryButton);
+        
+        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setActiveButton(primaryButton);
+                setActiveSubScene(helpSubScene);
+            }
+        });
+    }
+    
+    private void createCreditsButton() {
+        MenuButton primaryButton = new MenuButton("CREDITS");
+        addMenuButton(primaryButton);
+        
+        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setActiveButton(primaryButton);
+                setActiveSubScene(creditsSubScene);
+            }
+        });
+    }
+    
+    private void createExitButton() {
+        MenuButton primaryButton = new MenuButton("EXIT");
+        addMenuButton(primaryButton);
+        
+        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setActiveButton(primaryButton);
+                mainStage.close();
+            }
+        });
+    }
+    
+    private void createLogo() {
+        ImageView logo = new ImageView("view/assets/cooltext381814223973078.png");
+        logo.setLayoutX(436.5);
+        logo.setLayoutY(96.75);
+        root.getChildren().add(logo);
+    }
+    
     private void createMenuSubScenes() {
         createStartSubScene();
         createOptionsSubScene();
@@ -131,8 +231,12 @@ public class ViewManager {
             public void handle(ActionEvent t) {
                 int currentLevel = 1;
                 PanelButton nextLevel = level2Button;
+                
+                mainBackground.stopBackgroundAnimationTimer();
+                mainBackground.stopStarsTimeline();
+                
                 GameView level = new GameView();
-                level.createNewGame(mainStage, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, mainBackground, keybinds, currentLevel, nextLevel);
             }
         });
     }
@@ -150,8 +254,12 @@ public class ViewManager {
             public void handle(ActionEvent t) {
                 int currentLevel = 2;
                 PanelButton nextLevel = level3Button;
+                
+                mainBackground.stopBackgroundAnimationTimer();
+                mainBackground.stopStarsTimeline();
+                
                 GameView level = new GameView();
-                level.createNewGame(mainStage, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, mainBackground, keybinds, currentLevel, nextLevel);
             }
         });
     }
@@ -169,8 +277,12 @@ public class ViewManager {
             public void handle(ActionEvent t) {
                 int currentLevel = 3;
                 PanelButton nextLevel = level1Button;
+                
+                mainBackground.stopBackgroundAnimationTimer();
+                mainBackground.stopStarsTimeline();
+                
                 GameView level = new GameView();
-                level.createNewGame(mainStage, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, mainBackground, keybinds, currentLevel, nextLevel);
             }
         });
     }
@@ -329,97 +441,6 @@ public class ViewManager {
         bodyLabel2.setLayoutX(315);
         bodyLabel2.setLayoutY(112.75);
         creditsSubScene.getPane().getChildren().add(bodyLabel2);
-    }
-    
-    public Stage getMainStage() {
-        return mainStage;
-    }
-    
-    private void addMenuButton(MenuButton button) {
-        button.setLayoutX(78);
-        button.setLayoutY(202.25 + menuButtons.size() * 100);
-        menuButtons.add(button);
-        root.getChildren().add(button);
-    }
-    
-    private void createMenuButtons() {
-        createStartButton();
-        createOptionsButton();
-        createHelpButton();
-        createCreditsButton();
-        createExitButton();
-    }
-    
-    private void createStartButton() {
-        startButton = new MenuButton("START");
-        addMenuButton(startButton);
-        
-        startButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                setActiveButton(startButton);
-                setActiveSubScene(startSubScene);
-            }
-        });
-    }
-    
-    private void createOptionsButton() {
-        MenuButton primaryButton = new MenuButton("OPTIONS");
-        addMenuButton(primaryButton);
-        
-        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                setActiveButton(primaryButton);
-                setActiveSubScene(optionsSubScene);
-            }
-        });
-    }
-    
-    private void createHelpButton() {
-        MenuButton primaryButton = new MenuButton("HELP");
-        addMenuButton(primaryButton);
-        
-        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                setActiveButton(primaryButton);
-                setActiveSubScene(helpSubScene);
-            }
-        });
-    }
-    
-    private void createCreditsButton() {
-        MenuButton primaryButton = new MenuButton("CREDITS");
-        addMenuButton(primaryButton);
-        
-        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                setActiveButton(primaryButton);
-                setActiveSubScene(creditsSubScene);
-            }
-        });
-    }
-    
-    private void createExitButton() {
-        MenuButton primaryButton = new MenuButton("EXIT");
-        addMenuButton(primaryButton);
-        
-        primaryButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent t) {
-                setActiveButton(primaryButton);
-                mainStage.close();
-            }
-        });
-    }
-    
-    private void createLogo() {
-        ImageView logo = new ImageView("view/assets/cooltext381814223973078.png");
-        logo.setLayoutX(436.5);
-        logo.setLayoutY(96.75);
-        root.getChildren().add(logo);
     }
     
 }
