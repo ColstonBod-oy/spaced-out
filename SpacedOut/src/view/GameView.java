@@ -24,6 +24,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.AnchorPaneBackground;
 import model.MenuLabel;
 import model.MenuSubScene;
 import model.PanelButton;
@@ -46,18 +47,6 @@ public class GameView {
         new Image("view/assets/sprites/sprite_asteroid2.png"),
         new Image("view/assets/sprites/sprite_asteroid3.png")
     };
-    private static final Image[] BLUE_STAR_SPRITE_IMAGES = {
-        new Image("view/assets/sprites/sprite_blue_star0.png"),
-        new Image("view/assets/sprites/sprite_blue_star1.png"),
-        new Image("view/assets/sprites/sprite_blue_star2.png"),
-        new Image("view/assets/sprites/sprite_blue_star3.png")
-    };
-    private static final Image[] WHITE_STAR_SPRITE_IMAGES = {
-        new Image("view/assets/sprites/sprite_white_star0.png"),
-        new Image("view/assets/sprites/sprite_white_star1.png"),
-        new Image("view/assets/sprites/sprite_white_star2.png"),
-        new Image("view/assets/sprites/sprite_white_star3.png")
-    };
     private static final Image[] EXPLOSION_SPRITE_IMAGES = {
         new Image("view/assets/sprites/sprite_explosion0.png"),
         new Image("view/assets/sprites/sprite_explosion1.png"),
@@ -73,11 +62,11 @@ public class GameView {
     private Stage gameStage;
     private AnimationTimer gameAnimationTimer;
     private Random gameRandom;
+    private AnchorPaneBackground gameBackground;
     private MenuSubScene gameOverSubScene;
     private MenuSubScene levelClearedSubScene;
     private AnimationTimer asteroidsAnimationTimer;
     private Timeline shipTimeline;
-    private Timeline starsTimeline;
     private Timeline explosionsTimeline;
     private Duration frameTime;
     private Duration frameGap;
@@ -91,7 +80,6 @@ public class GameView {
     private ImageView[] asteroidsMiddle;
     private ImageView[] asteroidsRight;
     private ImageView[] asteroidsRightEdge;
-    private ImageView[][] stars;
     private ImageView[] explosions;
     private double[][] asteroidsLeftValues;
     private double[][] asteroidsLeftEdgeValues;
@@ -105,11 +93,10 @@ public class GameView {
     private int asteroidsRightEdgeIndex;
     private int asteroidsRandom;
     private int asteroidsRotationRandom;
-    private int[] starsRandom;
     private int life;
     private int distanceTraveled;
     private int distanceGoal;
-    private int starsStep;
+    private int backgroundStep;
     private int asteroidsStep;
     private Stage menuStage;
     private KeyCode[] keybinds;
@@ -118,6 +105,7 @@ public class GameView {
     
     public GameView() {
         gameRandom = new Random();
+        gameBackground = new AnchorPaneBackground();
         initStage();
         initKeyListeners();
     }
@@ -174,6 +162,18 @@ public class GameView {
         });
     }
     
+    public AnchorPane getPane() {
+        return root;
+    }
+    
+    public void addDistanceTraveled() {
+        distanceTraveled += 1;
+    }
+    
+    public int getBackgroundStep() {
+        return backgroundStep;
+    }
+    
     public void createNewGame(Stage menuStage, KeyCode[] keybinds, int chosenLevel, PanelButton nextLevelButton) {
         this.menuStage = menuStage;
         this.keybinds = keybinds;
@@ -182,7 +182,6 @@ public class GameView {
         this.menuStage.hide();
         gameStage.show();
         animateShip();
-        animateStars();
         animateExplosions();
         createGameElements();
         createGameLoop();
@@ -196,45 +195,28 @@ public class GameView {
         
         if (chosenLevel == 1) {
             distanceGoal = 100;
-            starsStep = 2;
+            backgroundStep = 2;
             asteroidsStep = 7;
+            gameBackground.createNewBackground(this);
         }
         
         else if (chosenLevel == 2) {
             distanceGoal = 200;
-            starsStep = 5;
+            backgroundStep = 5;
             asteroidsStep = 10;
+            gameBackground.createNewBackground(this);
         }
         
         else {
             distanceGoal = 250;
-            starsStep = 8;
+            backgroundStep = 8;
             asteroidsStep = 13;
+            gameBackground.createNewBackground(this);
         }
         
-        createStars();
         createShip();
         createAsteroids();
         createExplosions();
-    }
-    
-    private void createStars() {
-        stars = new ImageView[20][2];
-        starsRandom = new int[20];
-        
-        for (int i = 0; i < stars.length; i++) {
-            stars[i][0] = new ImageView(BLUE_STAR_SPRITE_IMAGES[0]);
-            stars[i][0].setLayoutY(-35);
-            root.getChildren().add(stars[i][0]);
-            
-            stars[i][1] = new ImageView(WHITE_STAR_SPRITE_IMAGES[0]);
-            stars[i][1].setLayoutY(-35);
-            root.getChildren().add(stars[i][1]);
-            
-            starsRandom[i] = gameRandom.nextInt(stars[i].length);
-            stars[i][starsRandom[i]].setLayoutX(gameRandom.nextInt(990));
-            stars[i][starsRandom[i]].setLayoutY(gameRandom.nextInt(769) - 35);
-        }
     }
     
     private void createShip() {
@@ -348,7 +330,6 @@ public class GameView {
             @Override
             public void handle(long l) {
                 moveShip();
-                spawnStars();
                 spawnAsteroids();
                 checkCollisions();
                 checkLevelCleared();
@@ -452,7 +433,7 @@ public class GameView {
             @Override
             public void handle(ActionEvent t) {
                 shipTimeline.stop();
-                starsTimeline.stop();
+                gameBackground.stopStarsTimeline();
                 asteroidsAnimationTimer.stop();
                 gameStage.hide();
                 menuStage.show();
@@ -476,20 +457,6 @@ public class GameView {
             dialogLabel.setLayoutX(75);
             dialogLabel.setLayoutY(105);
             levelClearedSubScene.getPane().getChildren().add(dialogLabel);
-        }
-    }
-    
-    private void spawnStars() {
-        for (int i = 0; i < stars.length; i++) {
-            if (stars[i][starsRandom[i]].getLayoutY() > 803) {
-                starsRandom[i] = gameRandom.nextInt(stars[i].length);
-                generateStarsPosition(stars[i][starsRandom[i]]);
-                distanceTraveled += 1;
-            }
-            
-            else {
-                stars[i][starsRandom[i]].setLayoutY(stars[i][starsRandom[i]].getLayoutY() + starsStep);
-            }
         }
     }
     
@@ -586,6 +553,7 @@ public class GameView {
             ship.setLayoutY(ship.getLayoutY() + ship.getTranslateY());
             ship.setTranslateY(0);
             gameAnimationTimer.start();
+            gameBackground.startBackgroundAnimationTimer();
         });
         transition.play();
     }
@@ -620,11 +588,6 @@ public class GameView {
                 explosion.setLayoutY(-120);
             }
         });
-    }
-    
-    private void generateStarsPosition(ImageView image) {
-        image.setLayoutX(gameRandom.nextInt(990));
-        image.setLayoutY(-(gameRandom.nextInt(769) + 35));
     }
     
     private void generateAsteroidsLeftPosition(ImageView image, ImageView[] images, double halfHeight) {
@@ -667,37 +630,6 @@ public class GameView {
         shipTimeline.setAutoReverse(true);
         shipTimeline.setCycleCount(Animation.INDEFINITE);
         shipTimeline.play();
-    }
-    
-    private void animateStars() {
-        starsTimeline = new Timeline();
-        Collection<KeyFrame> frames = starsTimeline.getKeyFrames();
-        frameTime = Duration.ZERO;
-        frameGap = Duration.millis(100);
-        
-        for (Image img : BLUE_STAR_SPRITE_IMAGES) {
-            frameTime = frameTime.add(frameGap);
-            frames.add(new KeyFrame(frameTime, e -> {
-                for (ImageView[] star : stars) {
-                    star[0].setImage(img);
-                }
-            }));
-        }
-        
-        frameTime = Duration.ZERO;
-        
-        for (Image img : WHITE_STAR_SPRITE_IMAGES) {
-            frameTime = frameTime.add(frameGap);
-            frames.add(new KeyFrame(frameTime, e -> {
-                for (ImageView[] star : stars) {
-                    star[1].setImage(img);
-                }
-            }));
-        }
-        
-        starsTimeline.setAutoReverse(true);
-        starsTimeline.setCycleCount(Animation.INDEFINITE);
-        starsTimeline.play();
     }
     
     private void animateExplosions() {
@@ -833,12 +765,12 @@ public class GameView {
             ship.setRotate(shipAngle);
             
             if (ship.getLayoutY() < 648) {
-                if (ship.getLayoutY() + starsStep > 648) {
+                if (ship.getLayoutY() + backgroundStep > 648) {
                     ship.setLayoutY(648);
                 }
                 
                 else {
-                    ship.setLayoutY(ship.getLayoutY() + starsStep);
+                    ship.setLayoutY(ship.getLayoutY() + backgroundStep);
                 }
             }
         }
@@ -971,11 +903,12 @@ public class GameView {
         
         if (levelCleared) {
             gameAnimationTimer.stop();
+            gameBackground.stopBackgroundAnimationTimer();
             
             PauseTransition delay = new PauseTransition(Duration.millis(1500));
             delay.setOnFinished(e -> {
                 shipTimeline.stop();
-                starsTimeline.stop();
+                gameBackground.stopStarsTimeline();
                 asteroidsAnimationTimer.stop();
                 nextLevelButton.setDisable(false);
                 gameStage.hide();
@@ -999,6 +932,7 @@ public class GameView {
         if (life <= 0) {
             ship.setVisible(false);
             gameAnimationTimer.stop();
+            gameBackground.stopBackgroundAnimationTimer();
             
             explode(explosions[0], ship.getLayoutX(), ship.getLayoutY());
             explosionsTimeline.setOnFinished(e -> {

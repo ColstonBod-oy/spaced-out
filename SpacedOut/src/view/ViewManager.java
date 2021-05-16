@@ -129,8 +129,10 @@ public class ViewManager {
         level1Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
+                int currentLevel = 1;
+                PanelButton nextLevel = level2Button;
                 GameView level = new GameView();
-                level.createNewGame(mainStage, keybinds, 1, level2Button);
+                level.createNewGame(mainStage, keybinds, currentLevel, nextLevel);
             }
         });
     }
@@ -146,8 +148,10 @@ public class ViewManager {
         level2Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
+                int currentLevel = 2;
+                PanelButton nextLevel = level3Button;
                 GameView level = new GameView();
-                level.createNewGame(mainStage, keybinds, 2, level3Button);
+                level.createNewGame(mainStage, keybinds, currentLevel, nextLevel);
             }
         });
     }
@@ -163,8 +167,10 @@ public class ViewManager {
         level3Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
+                int currentLevel = 3;
+                PanelButton nextLevel = level1Button;
                 GameView level = new GameView();
-                level.createNewGame(mainStage, keybinds, 3, level1Button);
+                level.createNewGame(mainStage, keybinds, currentLevel, nextLevel);
             }
         });
     }
