@@ -5,6 +5,7 @@
  */
 package view;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import model.AnchorPaneBackground;
 import model.ControlsButton;
@@ -31,10 +34,12 @@ public class ViewManager {
     
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
+    private static final String MUSIC_PATH = "/view/assets/music/constellation-upbeat-spacey-song.wav";
     private AnchorPane root;
     private Scene mainScene;
     private Stage mainStage;
-    private AnchorPaneBackground mainBackground;
+    private MediaPlayer menuMediaPlayer;
+    private AnchorPaneBackground menuBackground;
     private List<MenuButton> menuButtons;
     private MenuButton startButton;
     private MenuButton toDeactivate;
@@ -48,6 +53,7 @@ public class ViewManager {
     private MenuSubScene helpSubScene;
     private MenuSubScene creditsSubScene;
     private MenuSubScene toHide;
+    private boolean isMusicOn;
     
     public ViewManager() {
         root = new AnchorPane();
@@ -55,13 +61,15 @@ public class ViewManager {
         mainScene = new Scene(root, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene);
-        mainBackground = new AnchorPaneBackground();
+        menuBackground = new AnchorPaneBackground();
         menuButtons = new ArrayList<>();
         keybinds = new KeyCode[4];
         keybinds[0] = KeyCode.A;
         keybinds[1] = KeyCode.S;
         keybinds[2] = KeyCode.D;
         keybinds[3] = KeyCode.F;
+        isMusicOn = true;
+        createMenuMusic();
         createMenuBackground();
         createMenuButtons();
         createLogo();
@@ -113,9 +121,15 @@ public class ViewManager {
         root.getChildren().add(button);
     }
     
+    private void createMenuMusic() {
+        Media music = new Media(getClass().getResource(MUSIC_PATH).toExternalForm());
+        menuMediaPlayer = new MediaPlayer(music);
+        menuMediaPlayer.play();
+    }
+    
     private void createMenuBackground() {
         int step = 1;
-        mainBackground.createNewBackground(root, step);
+        menuBackground.createNewBackground(root, step);
     }
     
     private void createMenuButtons() {
@@ -232,11 +246,11 @@ public class ViewManager {
                 int currentLevel = 1;
                 PanelButton nextLevel = level2Button;
                 
-                mainBackground.stopBackgroundAnimationTimer();
-                mainBackground.stopStarsTimeline();
+                menuBackground.stopBackgroundAnimationTimer();
+                menuBackground.stopStarsTimeline();
                 
                 GameView level = new GameView();
-                level.createNewGame(mainStage, mainBackground, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, menuBackground, keybinds, currentLevel, nextLevel);
             }
         });
     }
@@ -255,11 +269,11 @@ public class ViewManager {
                 int currentLevel = 2;
                 PanelButton nextLevel = level3Button;
                 
-                mainBackground.stopBackgroundAnimationTimer();
-                mainBackground.stopStarsTimeline();
+                menuBackground.stopBackgroundAnimationTimer();
+                menuBackground.stopStarsTimeline();
                 
                 GameView level = new GameView();
-                level.createNewGame(mainStage, mainBackground, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, menuBackground, keybinds, currentLevel, nextLevel);
             }
         });
     }
@@ -278,11 +292,11 @@ public class ViewManager {
                 int currentLevel = 3;
                 PanelButton nextLevel = level1Button;
                 
-                mainBackground.stopBackgroundAnimationTimer();
-                mainBackground.stopStarsTimeline();
+                menuBackground.stopBackgroundAnimationTimer();
+                menuBackground.stopStarsTimeline();
                 
                 GameView level = new GameView();
-                level.createNewGame(mainStage, mainBackground, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, menuBackground, keybinds, currentLevel, nextLevel);
             }
         });
     }
@@ -301,103 +315,128 @@ public class ViewManager {
         headerLabel2.setLayoutY(37.25);
         optionsSubScene.getPane().getChildren().add(headerLabel2);
         
+        createMusicButton();
         createMovement1Button();
         createMovement2Button();
         createMovement3Button();
         createMovement4Button();
     }
     
-    private void createMovement1Button() {
-        ControlsButton smallButton = new ControlsButton(keybinds[0].getName());
-        smallButton.setLayoutX(325);
-        smallButton.setLayoutY(122.75);
-        optionsSubScene.getPane().getChildren().add(smallButton);
+    private void createMusicButton() {
+        PanelButton largeButton = new PanelButton("ON", 34, 147, 147);
+        largeButton.setLayoutX(91.5);
+        largeButton.setLayoutY(147.75);
+        optionsSubScene.getPane().getChildren().add(largeButton);
         
-        smallButton.setOnAction(new EventHandler<ActionEvent>() {
+        largeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                setSelectedButton(smallButton);
+                if (isMusicOn) {
+                    largeButton.setText("OFF");
+                    menuMediaPlayer.pause();
+                    isMusicOn = false;
+                }
+                
+                else {
+                    largeButton.setText("ON");
+                    menuMediaPlayer.play();
+                    isMusicOn = true;
+                }
+            }
+        });
+    }
+    
+    private void createMovement1Button() {
+        ControlsButton mediumButton = new ControlsButton(keybinds[0].getName());
+        mediumButton.setLayoutX(325);
+        mediumButton.setLayoutY(122.75);
+        optionsSubScene.getPane().getChildren().add(mediumButton);
+        
+        mediumButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                setSelectedButton(mediumButton);
             }
         });
         
-        smallButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        mediumButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if (toDeselect == smallButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
+                if (toDeselect == mediumButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
                     keybinds[0] = t.getCode();
-                    smallButton.setText(t.getText());
+                    mediumButton.setText(t.getText());
                 }
             }
         });
     }
     
     private void createMovement2Button() {
-        ControlsButton smallButton = new ControlsButton(keybinds[1].getName());
-        smallButton.setLayoutX(447);
-        smallButton.setLayoutY(122.75);
-        optionsSubScene.getPane().getChildren().add(smallButton);
+        ControlsButton mediumButton = new ControlsButton(keybinds[1].getName());
+        mediumButton.setLayoutX(447);
+        mediumButton.setLayoutY(122.75);
+        optionsSubScene.getPane().getChildren().add(mediumButton);
         
-        smallButton.setOnAction(new EventHandler<ActionEvent>() {
+        mediumButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                setSelectedButton(smallButton);
+                setSelectedButton(mediumButton);
             }
         });
         
-        smallButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        mediumButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if (toDeselect == smallButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
+                if (toDeselect == mediumButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
                     keybinds[1] = t.getCode();
-                    smallButton.setText(t.getText());
+                    mediumButton.setText(t.getText());
                 }
             }
         });
     }
     
     private void createMovement3Button() {
-        ControlsButton smallButton = new ControlsButton(keybinds[2].getName());
-        smallButton.setLayoutX(325);
-        smallButton.setLayoutY(244.75);
-        optionsSubScene.getPane().getChildren().add(smallButton);
+        ControlsButton mediumButton = new ControlsButton(keybinds[2].getName());
+        mediumButton.setLayoutX(325);
+        mediumButton.setLayoutY(244.75);
+        optionsSubScene.getPane().getChildren().add(mediumButton);
         
-        smallButton.setOnAction(new EventHandler<ActionEvent>() {
+        mediumButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                setSelectedButton(smallButton);
+                setSelectedButton(mediumButton);
             }
         });
         
-        smallButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        mediumButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if (toDeselect == smallButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
+                if (toDeselect == mediumButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
                     keybinds[2] = t.getCode();
-                    smallButton.setText(t.getText());
+                    mediumButton.setText(t.getText());
                 }
             }
         });
     }
     
     private void createMovement4Button() {
-        ControlsButton smallButton = new ControlsButton(keybinds[3].getName());
-        smallButton.setLayoutX(447);
-        smallButton.setLayoutY(244.75);
-        optionsSubScene.getPane().getChildren().add(smallButton);
+        ControlsButton mediumButton = new ControlsButton(keybinds[3].getName());
+        mediumButton.setLayoutX(447);
+        mediumButton.setLayoutY(244.75);
+        optionsSubScene.getPane().getChildren().add(mediumButton);
         
-        smallButton.setOnAction(new EventHandler<ActionEvent>() {
+        mediumButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                setSelectedButton(smallButton);
+                setSelectedButton(mediumButton);
             }
         });
         
-        smallButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        mediumButton.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                if (toDeselect == smallButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
+                if (toDeselect == mediumButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
                     keybinds[3] = t.getCode();
-                    smallButton.setText(t.getText());
+                    mediumButton.setText(t.getText());
                 }
             }
         });

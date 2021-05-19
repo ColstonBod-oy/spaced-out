@@ -25,8 +25,8 @@ import view.GameView;
 public class AnchorPaneBackground {
     
     private static final Image[] BACKGROUND_SPRITE_IMAGES = {
-        new Image("view/assets/sprites/blue.png"),
         new Image("view/assets/sprites/black.png"),
+        new Image("view/assets/sprites/blue.png"),
         new Image("view/assets/sprites/darkPurple.png"),
         new Image("view/assets/sprites/purple.png")
     };
