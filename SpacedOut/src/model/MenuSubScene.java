@@ -13,6 +13,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundPosition;
 import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.media.AudioClip;
 import javafx.util.Duration;
 
 /**
@@ -22,8 +23,11 @@ import javafx.util.Duration;
 public class MenuSubScene extends SubScene {
     
     private static final String BACKGROUND_IMAGE = "/model/assets/green_panel.png";
+    private static final String SLIDE_SFX_PATH = "/model/assets/sfx/slide-electronic-02.wav";
     private AnchorPane root;
     private TranslateTransition transition;
+    private AudioClip slide;
+    public static boolean isAudioOn;
     private boolean isHidden;
     
     public MenuSubScene(int prefWidth, int prefHeight, double y) {
@@ -34,9 +38,15 @@ public class MenuSubScene extends SubScene {
         BackgroundImage image = new BackgroundImage(new Image(BACKGROUND_IMAGE, prefWidth, prefHeight, false, true), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, null);
         root = (AnchorPane) this.getRoot();
         root.setBackground(new Background(image));
+        isAudioOn = true;
         isHidden = true;
+        createSubSceneSFX();
         setLayoutX(1024);
         setLayoutY(y);
+    }
+    
+    private void createSubSceneSFX() {
+        slide = new AudioClip(getClass().getResource(SLIDE_SFX_PATH).toExternalForm());
     }
     
     public AnchorPane getPane() {
@@ -51,6 +61,10 @@ public class MenuSubScene extends SubScene {
         if (isHidden) {
             transition.setToX(endpoint);
             isHidden = false;
+            
+            if (isAudioOn) {
+                slide.play();
+            }
         }
         
         else {

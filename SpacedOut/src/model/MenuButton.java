@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.AudioClip;
 import javafx.scene.text.Font;
 
 /**
@@ -20,9 +21,14 @@ import javafx.scene.text.Font;
 public class MenuButton extends Button {
     
     private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String PRESSED_SFX_PATH = "/model/assets/sfx/rollover1.wav";
+    private static final String ENTERED_SFX_PATH = "/model/assets/sfx/rollover2.wav";
     private static final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/green_button05.png');";
     private static final String BUTTON_RELEASED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/green_button04.png');";
     private static final String BUTTON_DEFAULT_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/grey_button03.png');";
+    private AudioClip rollover1;
+    private AudioClip rollover2;
+    public static boolean isAudioOn;
     private boolean isActive;
     private boolean isPressed;
     
@@ -32,8 +38,10 @@ public class MenuButton extends Button {
         setPrefWidth(190);
         setPrefHeight(49);
         setStyle(BUTTON_DEFAULT_STYLE);
+        isAudioOn = true;
         isActive = false;
         isPressed = false;
+        createButtonSFX();
         initButtonListeners();
     }
     
@@ -65,6 +73,11 @@ public class MenuButton extends Button {
         setLayoutY(getLayoutY() - 4);
     }
     
+    private void createButtonSFX() {
+        rollover1 = new AudioClip(getClass().getResource(PRESSED_SFX_PATH).toExternalForm());
+        rollover2 = new AudioClip(getClass().getResource(ENTERED_SFX_PATH).toExternalForm());
+    }
+    
     private void initButtonListeners() {
         setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -72,6 +85,10 @@ public class MenuButton extends Button {
                 if (t.getButton().equals(MouseButton.PRIMARY)) {
                     setButtonPressed();
                     isPressed = true;
+                    
+                    if (isAudioOn) {
+                        rollover1.play();
+                    }
                 }
             }
         });
@@ -90,6 +107,10 @@ public class MenuButton extends Button {
             @Override
             public void handle(MouseEvent t) {
                 setStyle(BUTTON_RELEASED_STYLE);
+                
+                if (isAudioOn) {
+                    rollover2.play();
+                }
             }
         });
         

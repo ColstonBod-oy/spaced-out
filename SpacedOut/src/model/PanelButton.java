@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.AudioClip;
 import javafx.scene.text.Font;
 
 /**
@@ -20,9 +21,14 @@ import javafx.scene.text.Font;
 public class PanelButton extends Button {
     
     private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String PRESSED_SFX_PATH = "/model/assets/sfx/rollover1.wav";
+    private static final String ENTERED_SFX_PATH = "/model/assets/sfx/rollover2.wav";
     private String buttonPressedStyle;
     private String buttonReleasedStyle;
     private String buttonDefaultStyle;
+    private AudioClip rollover1;
+    private AudioClip rollover2;
+    public static boolean isAudioOn;
     private boolean isPressed;
     
     public PanelButton(String text, int fontSize, int prefWidth, int prefHeight) {
@@ -34,7 +40,9 @@ public class PanelButton extends Button {
         buttonReleasedStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button11.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
         buttonDefaultStyle = "-fx-background-color: transparent; -fx-background-image: url('/view/assets/green_button06.png'); -fx-background-size: " + prefWidth + " " + prefHeight + "; -fx-background-repeat: no-repeat;";
         setStyle(buttonDefaultStyle);
+        isAudioOn = true;
         isPressed = false;
+        createButtonSFX();
         initButtonListeners(prefHeight);
     }
     
@@ -63,6 +71,11 @@ public class PanelButton extends Button {
         setLayoutY(getLayoutY() - (double) 4 * offset / 49);
     }
     
+    private void createButtonSFX() {
+        rollover1 = new AudioClip(getClass().getResource(PRESSED_SFX_PATH).toExternalForm());
+        rollover2 = new AudioClip(getClass().getResource(ENTERED_SFX_PATH).toExternalForm());
+    }
+    
     private void initButtonListeners(int height) {
         setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
@@ -70,6 +83,10 @@ public class PanelButton extends Button {
                 if (t.getButton().equals(MouseButton.PRIMARY)) {
                     setButtonPressed(height);
                     isPressed = true;
+                    
+                    if (isAudioOn) {
+                        rollover1.play();
+                    }
                 }
             }
         });
@@ -88,6 +105,10 @@ public class PanelButton extends Button {
             @Override
             public void handle(MouseEvent t) {
                 setStyle(buttonReleasedStyle);
+                
+                if (isAudioOn) {
+                    rollover2.play();
+                }
             }
         });
         

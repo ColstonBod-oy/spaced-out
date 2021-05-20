@@ -5,7 +5,6 @@
  */
 package view;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -53,7 +52,7 @@ public class ViewManager {
     private MenuSubScene helpSubScene;
     private MenuSubScene creditsSubScene;
     private MenuSubScene toHide;
-    private boolean isMusicOn;
+    private boolean isAudioOn;
     
     public ViewManager() {
         root = new AnchorPane();
@@ -68,12 +67,12 @@ public class ViewManager {
         keybinds[1] = KeyCode.S;
         keybinds[2] = KeyCode.D;
         keybinds[3] = KeyCode.F;
-        isMusicOn = true;
+        isAudioOn = true;
         createMenuMusic();
         createMenuBackground();
         createMenuButtons();
-        createLogo();
         createMenuSubScenes();
+        createLogo();
         setActiveButton(startButton);
         setActiveSubScene(startSubScene);
     }
@@ -124,6 +123,7 @@ public class ViewManager {
     private void createMenuMusic() {
         Media music = new Media(getClass().getResource(MUSIC_PATH).toExternalForm());
         menuMediaPlayer = new MediaPlayer(music);
+        menuMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         menuMediaPlayer.play();
     }
     
@@ -205,13 +205,6 @@ public class ViewManager {
         });
     }
     
-    private void createLogo() {
-        ImageView logo = new ImageView("view/assets/cooltext381814223973078.png");
-        logo.setLayoutX(436.5);
-        logo.setLayoutY(96.75);
-        root.getChildren().add(logo);
-    }
-    
     private void createMenuSubScenes() {
         createStartSubScene();
         createOptionsSubScene();
@@ -246,11 +239,12 @@ public class ViewManager {
                 int currentLevel = 1;
                 PanelButton nextLevel = level2Button;
                 
+                menuMediaPlayer.stop();
                 menuBackground.stopBackgroundAnimationTimer();
                 menuBackground.stopStarsTimeline();
                 
                 GameView level = new GameView();
-                level.createNewGame(mainStage, menuBackground, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, menuMediaPlayer, menuBackground, keybinds, isAudioOn, currentLevel, nextLevel);
             }
         });
     }
@@ -269,11 +263,12 @@ public class ViewManager {
                 int currentLevel = 2;
                 PanelButton nextLevel = level3Button;
                 
+                menuMediaPlayer.stop();
                 menuBackground.stopBackgroundAnimationTimer();
                 menuBackground.stopStarsTimeline();
                 
                 GameView level = new GameView();
-                level.createNewGame(mainStage, menuBackground, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, menuMediaPlayer, menuBackground, keybinds, isAudioOn, currentLevel, nextLevel);
             }
         });
     }
@@ -292,11 +287,12 @@ public class ViewManager {
                 int currentLevel = 3;
                 PanelButton nextLevel = level1Button;
                 
+                menuMediaPlayer.stop();
                 menuBackground.stopBackgroundAnimationTimer();
                 menuBackground.stopStarsTimeline();
                 
                 GameView level = new GameView();
-                level.createNewGame(mainStage, menuBackground, keybinds, currentLevel, nextLevel);
+                level.createNewGame(mainStage, menuMediaPlayer, menuBackground, keybinds, isAudioOn, currentLevel, nextLevel);
             }
         });
     }
@@ -305,7 +301,7 @@ public class ViewManager {
         optionsSubScene = new MenuSubScene(600, 400, 226.75);
         root.getChildren().add(optionsSubScene);
         
-        MenuLabel headerLabel1 = new MenuLabel("MUSIC", 23, 210, 49, -2);
+        MenuLabel headerLabel1 = new MenuLabel("AUDIO", 23, 210, 49, -2);
         headerLabel1.setLayoutX(60);
         headerLabel1.setLayoutY(37.25);
         optionsSubScene.getPane().getChildren().add(headerLabel1);
@@ -331,16 +327,24 @@ public class ViewManager {
         largeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                if (isMusicOn) {
+                if (isAudioOn) {
                     largeButton.setText("OFF");
                     menuMediaPlayer.pause();
-                    isMusicOn = false;
+                    MenuButton.isAudioOn = false;
+                    PanelButton.isAudioOn = false;
+                    ControlsButton.isAudioOn = false;
+                    MenuSubScene.isAudioOn = false;
+                    isAudioOn = false;
                 }
                 
                 else {
                     largeButton.setText("ON");
                     menuMediaPlayer.play();
-                    isMusicOn = true;
+                    MenuButton.isAudioOn = true;
+                    PanelButton.isAudioOn = true;
+                    ControlsButton.isAudioOn = true;
+                    MenuSubScene.isAudioOn = true;
+                    isAudioOn = true;
                 }
             }
         });
@@ -480,6 +484,13 @@ public class ViewManager {
         bodyLabel2.setLayoutX(315);
         bodyLabel2.setLayoutY(112.75);
         creditsSubScene.getPane().getChildren().add(bodyLabel2);
+    }
+    
+    private void createLogo() {
+        ImageView logo = new ImageView("view/assets/cooltext381814223973078.png");
+        logo.setLayoutX(436.5);
+        logo.setLayoutY(96.75);
+        root.getChildren().add(logo);
     }
     
 }

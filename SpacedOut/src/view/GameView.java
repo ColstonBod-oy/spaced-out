@@ -22,6 +22,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import model.AnchorPaneBackground;
@@ -37,6 +40,10 @@ public class GameView {
     
     private static final int GAME_WIDTH = 1024;
     private static final int GAME_HEIGHT = 768;
+    private static final String MUSIC_PATH = "/view/assets/music/ambient-loop2.wav";
+    private static final String MOVEMENT_SFX_PATH = "/view/assets/sfx/huge-bass.wav";
+    private static final String DAMAGE_SFX_PATH = "/view/assets/sfx/sick-nasty-bass-hit.mp3";
+    private static final String DEATH_SFX_PATH = "/view/assets/sfx/bass-boom-001.wav";
     private static final Image[] SHIP_SPRITE_IMAGES = {
         new Image("view/assets/sprites/sprite_ship0.png"),
         new Image("view/assets/sprites/sprite_ship1.png")
@@ -62,7 +69,11 @@ public class GameView {
     private Stage gameStage;
     private AnimationTimer gameAnimationTimer;
     private Random gameRandom;
+    private MediaPlayer gameMediaPlayer;
     private AnchorPaneBackground gameBackground;
+    private AudioClip bass;
+    private AudioClip bassHit;
+    private AudioClip bassBoom;
     private MenuSubScene gameOverSubScene;
     private MenuSubScene levelClearedSubScene;
     private AnimationTimer asteroidsAnimationTimer;
@@ -99,16 +110,32 @@ public class GameView {
     private int backgroundStep;
     private int asteroidsStep;
     private Stage menuStage;
+    private MediaPlayer menuMediaPlayer;
     private AnchorPaneBackground menuBackground;
     private KeyCode[] keybinds;
+    private boolean isAudioOn;
     private int chosenLevel;
     private PanelButton nextLevelButton;
     
     public GameView() {
+        createGameMusic();
+        createGameSFX();
         initStage();
         initKeyListeners();
         gameRandom = new Random();
         gameBackground = new AnchorPaneBackground();
+    }
+    
+    private void createGameMusic() {
+        Media music = new Media(getClass().getResource(MUSIC_PATH).toExternalForm());
+        gameMediaPlayer = new MediaPlayer(music);
+        gameMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+    }
+    
+    private void createGameSFX() {
+        bass = new AudioClip(getClass().getResource(MOVEMENT_SFX_PATH).toExternalForm());
+        bassHit = new AudioClip(getClass().getResource(DAMAGE_SFX_PATH).toExternalForm());
+        bassBoom = new AudioClip(getClass().getResource(DEATH_SFX_PATH).toExternalForm());
     }
     
     private void initStage() {
@@ -125,18 +152,34 @@ public class GameView {
             public void handle(KeyEvent t) {
                 if (keybinds[0].equals(t.getCode())) {
                     isUpLeftPressed = true;
+                    
+                    if (isAudioOn) {
+                        bass.play();
+                    }
                 }
                 
                 else if (keybinds[1].equals(t.getCode())) {
                     isUpRightPressed = true;
+                    
+                    if (isAudioOn) {
+                        bass.play();
+                    }
                 }
                 
                 else if (keybinds[2].equals(t.getCode())) {
                     isDownLeftPressed = true;
+                    
+                    if (isAudioOn) {
+                        bass.play();
+                    }
                 }
                 
                 else if (keybinds[3].equals(t.getCode())) {
                     isDownRightPressed = true;
+                    
+                    if (isAudioOn) {
+                        bass.play();
+                    }
                 }
             }
         });
@@ -175,10 +218,12 @@ public class GameView {
         return backgroundStep;
     }
     
-    public void createNewGame(Stage menuStage, AnchorPaneBackground menuBackground, KeyCode[] keybinds, int chosenLevel, PanelButton nextLevelButton) {
+    public void createNewGame(Stage menuStage, MediaPlayer menuMediaPlayer, AnchorPaneBackground menuBackground, KeyCode[] keybinds, boolean isAudioOn, int chosenLevel, PanelButton nextLevelButton) {
         this.menuStage = menuStage;
+        this.menuMediaPlayer = menuMediaPlayer;
         this.menuBackground = menuBackground;
         this.keybinds = keybinds;
+        this.isAudioOn = isAudioOn;
         this.chosenLevel = chosenLevel;
         this.nextLevelButton = nextLevelButton;
         this.menuStage.hide();
@@ -189,6 +234,10 @@ public class GameView {
         createGameLoop();
         createGameOverScreen();
         createLevelClearedScreen();
+        
+        if (this.isAudioOn) {
+            gameMediaPlayer.play();
+        }
     }
     
     private void createGameElements() {
@@ -424,6 +473,10 @@ public class GameView {
             public void handle(ActionEvent t) {
                 gameOverSubScene.moveSubScene(-712);
                 respawnShip();
+                
+                if (isAudioOn) {
+                    gameMediaPlayer.play();
+                }
             }
         });
     }
@@ -445,6 +498,10 @@ public class GameView {
                 menuBackground.playStarsTimeline();
                 gameStage.hide();
                 menuStage.show();
+                
+                if (isAudioOn) {
+                    menuMediaPlayer.play();
+                }
             }
         });
     }
@@ -911,6 +968,7 @@ public class GameView {
         
         if (levelCleared) {
             gameAnimationTimer.stop();
+            gameMediaPlayer.stop();
             gameBackground.stopBackgroundAnimationTimer();
             
             PauseTransition delay = new PauseTransition(Duration.millis(1500));
@@ -924,6 +982,10 @@ public class GameView {
                 nextLevelButton.setDisable(false);
                 gameStage.hide();
                 menuStage.show();
+                
+                if (isAudioOn) {
+                    menuMediaPlayer.play();
+                }
             });
             
             levelClearedSubScene.moveSubScene(-712);
@@ -935,6 +997,14 @@ public class GameView {
         image.setLayoutX(x);
         image.setLayoutY(y);
         explosionsTimeline.playFromStart();
+        
+        if (isAudioOn && life > 0) {
+            bassHit.play();
+        }
+        
+        else if (isAudioOn) {
+            bassBoom.play();
+        }
     }
     
     private void dealDamage(double damage) {
@@ -943,6 +1013,7 @@ public class GameView {
         if (life <= 0) {
             ship.setVisible(false);
             gameAnimationTimer.stop();
+            gameMediaPlayer.stop();
             gameBackground.stopBackgroundAnimationTimer();
             
             explode(explosions[0], ship.getLayoutX(), ship.getLayoutY());
