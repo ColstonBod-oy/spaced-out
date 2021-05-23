@@ -27,6 +27,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javax.swing.JOptionPane;
 import model.AnchorPaneBackground;
 import model.MenuLabel;
 import model.MenuSubScene;
@@ -144,42 +145,52 @@ public class GameView {
         gameScene = new Scene(root, GAME_WIDTH, GAME_HEIGHT);
         gameStage = new Stage();
         gameStage.setScene(gameScene);
+        gameStage.setResizable(false);
+        gameStage.setOnCloseRequest(e -> {
+            e.consume();
+            createJOptionPane();
+        });
     }
     
     private void initKeyListeners() {
+        isUpLeftPressed = false;
+        isUpRightPressed = false;
+        isDownLeftPressed = false;
+        isDownRightPressed = false;
+                
         gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
                 if (keybinds[0].equals(t.getCode())) {
-                    isUpLeftPressed = true;
-                    
-                    if (isAudioOn) {
+                    if (isAudioOn && !isUpLeftPressed) {
                         bass.play();
                     }
+                    
+                    isUpLeftPressed = true;
                 }
                 
                 else if (keybinds[1].equals(t.getCode())) {
-                    isUpRightPressed = true;
-                    
-                    if (isAudioOn) {
+                    if (isAudioOn && !isUpRightPressed) {
                         bass.play();
                     }
+                    
+                    isUpRightPressed = true;
                 }
                 
                 else if (keybinds[2].equals(t.getCode())) {
-                    isDownLeftPressed = true;
-                    
-                    if (isAudioOn) {
+                    if (isAudioOn && !isDownLeftPressed) {
                         bass.play();
                     }
+                    
+                    isDownLeftPressed = true;
                 }
                 
                 else if (keybinds[3].equals(t.getCode())) {
-                    isDownRightPressed = true;
-                    
-                    if (isAudioOn) {
+                    if (isAudioOn && !isDownRightPressed) {
                         bass.play();
                     }
+                     
+                    isDownRightPressed = true;
                 }
             }
         });
@@ -237,6 +248,11 @@ public class GameView {
         
         if (this.isAudioOn) {
             gameMediaPlayer.play();
+        }
+        
+        else {
+            PanelButton.isAudioOn = false;
+            MenuSubScene.isAudioOn = false;
         }
     }
     
@@ -522,6 +538,14 @@ public class GameView {
             dialogLabel.setLayoutX(75);
             dialogLabel.setLayoutY(105);
             levelClearedSubScene.getPane().getChildren().add(dialogLabel);
+        }
+    }
+    
+    private void createJOptionPane() {
+        int answer = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
+        
+        if (answer == 0) {
+            gameStage.close();
         }
     }
     

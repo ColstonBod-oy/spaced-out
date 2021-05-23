@@ -18,6 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
+import javax.swing.JOptionPane;
 import model.AnchorPaneBackground;
 import model.ControlsButton;
 import model.MenuButton;
@@ -60,6 +61,11 @@ public class ViewManager {
         mainScene = new Scene(root, WIDTH, HEIGHT);
         mainStage = new Stage();
         mainStage.setScene(mainScene);
+        mainStage.setResizable(false);
+        mainStage.setOnCloseRequest(e -> {
+            e.consume();
+            createJOptionPane();
+        });
         menuBackground = new AnchorPaneBackground();
         menuButtons = new ArrayList<>();
         keybinds = new KeyCode[4];
@@ -491,6 +497,14 @@ public class ViewManager {
         logo.setLayoutX(436.5);
         logo.setLayoutY(96.75);
         root.getChildren().add(logo);
+    }
+    
+    private void createJOptionPane() {
+        int answer = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Confirm Exit", JOptionPane.YES_NO_OPTION);
+        
+        if (answer == 0) {
+            mainStage.close();
+        }
     }
     
 }
