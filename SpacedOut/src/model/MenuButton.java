@@ -20,7 +20,7 @@ import javafx.scene.text.Font;
  */
 public class MenuButton extends Button {
     
-    private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String FONT_PATH = "/model/assets/kenvector_future.ttf";
     private static final String PRESSED_SFX_PATH = "/model/assets/sfx/rollover1.wav";
     private static final String ENTERED_SFX_PATH = "/model/assets/sfx/rollover2.wav";
     private static final String BUTTON_PRESSED_STYLE = "-fx-background-color: transparent; -fx-background-image: url('/model/assets/green_button05.png');";
@@ -46,13 +46,8 @@ public class MenuButton extends Button {
     }
     
     private void setButtonFont() {
-        try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), 23));
-        } 
-        
-        catch (FileNotFoundException ex) {
-            setFont(Font.font("Verdana", 23));
-        }
+        Font font = Font.loadFont(getClass().getResourceAsStream(FONT_PATH), 23);
+        setFont(font);
     }
     
     private void setButtonPressed() {

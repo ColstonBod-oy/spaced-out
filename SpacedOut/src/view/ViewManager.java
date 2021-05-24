@@ -390,6 +390,10 @@ public class ViewManager {
                         invalidInput.play();
                     }
                 }
+                
+                else {
+                    invalidInput.play();
+                }
             }
         });
     }
@@ -419,6 +423,10 @@ public class ViewManager {
                     else {
                         invalidInput.play();
                     }
+                }
+                
+                else {
+                    invalidInput.play();
                 }
             }
         });
@@ -450,6 +458,10 @@ public class ViewManager {
                         invalidInput.play();
                     }
                 }
+                
+                else {
+                    invalidInput.play();
+                }
             }
         });
     }
@@ -479,6 +491,10 @@ public class ViewManager {
                     else {
                         invalidInput.play();
                     }
+                }
+                
+                else {
+                    invalidInput.play();
                 }
             }
         });

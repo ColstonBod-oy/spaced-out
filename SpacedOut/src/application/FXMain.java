@@ -19,8 +19,6 @@ public class FXMain extends Application {
     public void start(Stage primaryStage) {
         ViewManager manager = new ViewManager();
         primaryStage = manager.getMainStage();
-        
-        primaryStage.setTitle("Hello World!");
         primaryStage.show();
     }
 

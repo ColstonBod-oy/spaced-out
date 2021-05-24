@@ -20,7 +20,7 @@ import javafx.scene.text.Font;
  */
 public class PanelButton extends Button {
     
-    private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String FONT_PATH = "/model/assets/kenvector_future.ttf";
     private static final String PRESSED_SFX_PATH = "/model/assets/sfx/rollover1.wav";
     private static final String ENTERED_SFX_PATH = "/model/assets/sfx/rollover2.wav";
     private String buttonPressedStyle;
@@ -47,13 +47,8 @@ public class PanelButton extends Button {
     }
     
     private void setButtonFont(int size) {
-        try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), size));
-        } 
-        
-        catch (FileNotFoundException ex) {
-            setFont(Font.font("Verdana", size));
-        }
+        Font font = Font.loadFont(getClass().getResourceAsStream(FONT_PATH), size);
+        setFont(font);
     }
     
     private void setButtonPressed(int offset) {

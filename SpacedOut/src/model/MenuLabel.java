@@ -24,7 +24,7 @@ import javafx.scene.text.TextAlignment;
  */
 public class MenuLabel extends Label {
     
-    private static final String FONT_PATH = "src/model/assets/kenvector_future.ttf";
+    private static final String FONT_PATH = "/model/assets/kenvector_future.ttf";
     private static final String BACKGROUND_IMAGE = "/view/assets/green_button13.png";
     
     public MenuLabel(String text, int fontSize, int prefWidth, int prefHeight, int topInset) {
@@ -42,13 +42,8 @@ public class MenuLabel extends Label {
     }
     
     private void setLabelFont(int size) {
-        try {
-            setFont(Font.loadFont(new FileInputStream(FONT_PATH), size));
-        } 
-        
-        catch (FileNotFoundException ex) {
-            setFont(Font.font("Verdana", size));
-        }
+        Font font = Font.loadFont(getClass().getResourceAsStream(FONT_PATH), size);
+        setFont(font);
     }
     
 }
