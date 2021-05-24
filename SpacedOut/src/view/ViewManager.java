@@ -15,6 +15,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
@@ -35,12 +36,14 @@ public class ViewManager {
     private static final int WIDTH = 1024;
     private static final int HEIGHT = 768;
     private static final String MUSIC_PATH = "/view/assets/music/constellation-upbeat-spacey-song.wav";
+    private static final String SFX_PATH = "/view/assets/sfx/sfx_lose.wav";
     private AnchorPane root;
     private Scene mainScene;
     private Stage mainStage;
     private MediaPlayer menuMediaPlayer;
     private AnchorPaneBackground menuBackground;
     private List<MenuButton> menuButtons;
+    private AudioClip invalidInput;
     private MenuButton startButton;
     private MenuButton toDeactivate;
     private PanelButton level1Button;
@@ -75,6 +78,7 @@ public class ViewManager {
         keybinds[3] = KeyCode.F;
         isAudioOn = true;
         createMenuMusic();
+        createMenuSFX();
         createMenuBackground();
         createMenuButtons();
         createMenuSubScenes();
@@ -131,6 +135,10 @@ public class ViewManager {
         menuMediaPlayer = new MediaPlayer(music);
         menuMediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         menuMediaPlayer.play();
+    }
+    
+    private void createMenuSFX() {
+        invalidInput = new AudioClip(getClass().getResource(SFX_PATH).toExternalForm());
     }
     
     private void createMenuBackground() {
@@ -373,8 +381,14 @@ public class ViewManager {
             @Override
             public void handle(KeyEvent t) {
                 if (toDeselect == mediumButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
-                    keybinds[0] = t.getCode();
-                    mediumButton.setText(t.getText());
+                    if (t.getCode().isLetterKey() || t.getCode().isDigitKey()) {
+                        keybinds[0] = t.getCode();
+                        mediumButton.setText(t.getText());
+                    }
+                    
+                    else {
+                        invalidInput.play();
+                    }
                 }
             }
         });
@@ -397,8 +411,14 @@ public class ViewManager {
             @Override
             public void handle(KeyEvent t) {
                 if (toDeselect == mediumButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
-                    keybinds[1] = t.getCode();
-                    mediumButton.setText(t.getText());
+                    if (t.getCode().isLetterKey() || t.getCode().isDigitKey()) {
+                        keybinds[1] = t.getCode();
+                        mediumButton.setText(t.getText());
+                    }
+                    
+                    else {
+                        invalidInput.play();
+                    }
                 }
             }
         });
@@ -421,8 +441,14 @@ public class ViewManager {
             @Override
             public void handle(KeyEvent t) {
                 if (toDeselect == mediumButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
-                    keybinds[2] = t.getCode();
-                    mediumButton.setText(t.getText());
+                    if (t.getCode().isLetterKey() || t.getCode().isDigitKey()) {
+                        keybinds[2] = t.getCode();
+                        mediumButton.setText(t.getText());
+                    }
+                    
+                    else {
+                        invalidInput.play();
+                    }
                 }
             }
         });
@@ -445,8 +471,14 @@ public class ViewManager {
             @Override
             public void handle(KeyEvent t) {
                 if (toDeselect == mediumButton && !Arrays.stream(keybinds).anyMatch(t.getCode()::equals)) {
-                    keybinds[3] = t.getCode();
-                    mediumButton.setText(t.getText());
+                    if (t.getCode().isLetterKey() || t.getCode().isDigitKey()) {
+                        keybinds[3] = t.getCode();
+                        mediumButton.setText(t.getText());
+                    }
+                    
+                    else {
+                        invalidInput.play();
+                    }
                 }
             }
         });
