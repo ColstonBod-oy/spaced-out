@@ -680,7 +680,7 @@ public class GameView {
     }
     
     private void generateAsteroidsLeftPosition(ImageView image, ImageView[] images, double halfHeight) {
-        image.setLayoutX(ThreadLocalRandom.current().nextInt(121, 241));
+        image.setLayoutX(ThreadLocalRandom.current().nextInt(120, 241));
         image.setLayoutY(images[asteroidsLeftIndex].getLayoutY() - (ThreadLocalRandom.current().nextInt(56, 76) + halfHeight * 2));
     }
     
@@ -690,7 +690,7 @@ public class GameView {
     }
     
     private void generateAsteroidsMiddlePosition(ImageView image, double halfWidth) {
-        image.setLayoutX(ThreadLocalRandom.current().nextInt(241, (int) (710 - halfWidth * 2)));
+        image.setLayoutX(ThreadLocalRandom.current().nextInt(240, (int) (710 - halfWidth * 2)));
         image.setLayoutY(-(gameRandom.nextInt(1601) + 65));
     }
     
@@ -700,7 +700,7 @@ public class GameView {
     }
     
     private void generateAsteroidsRightEdgePosition(ImageView image, ImageView[] images, double halfWidth, double halfHeight) {
-        image.setLayoutX(ThreadLocalRandom.current().nextInt(829, (int) (1025 - halfWidth * 2)));
+        image.setLayoutX(ThreadLocalRandom.current().nextInt(828, (int) (1025 - halfWidth * 2)));
         image.setLayoutY(images[asteroidsRightEdgeIndex].getLayoutY() - (ThreadLocalRandom.current().nextInt(56, 76) + halfHeight * 2));
     }
     
