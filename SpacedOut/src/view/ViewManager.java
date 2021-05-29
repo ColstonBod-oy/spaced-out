@@ -529,12 +529,12 @@ public class ViewManager {
         headerLabel2.setLayoutY(37.25);
         creditsSubScene.getPane().getChildren().add(headerLabel2);
         
-        MenuLabel bodyLabel1 = new MenuLabel("THIS PROJECT WAS\nINSPIRED BY A GAME\nMADE BY JAVACRAVING.\n\nASSETS USED ARE\nOBTAINED FROM KENNEY\nASSETS, OPEN\nGAMEART.ORG AND FREESOUND.ORG.", 13, 240, 200, -20);
+        MenuLabel bodyLabel1 = new MenuLabel("THIS PROJECT WAS\nINSPIRED BY A GAME\nMADE BY JAVACRAVING.\n\nASSETS USED ARE\nOBTAINED FROM KENNEY\nASSETS, OPEN\nGAMEART.ORG AND FREESOUND.ORG.", 13, 240, 220, -20);
         bodyLabel1.setLayoutX(45);
         bodyLabel1.setLayoutY(112.75);
         creditsSubScene.getPane().getChildren().add(bodyLabel1);
         
-        MenuLabel bodyLabel2 = new MenuLabel("youtu.be/DkIuA5ZEZ_U\n\nkenney.nl/assets?q=ui\nopengameart.org/\ncontent/i-are-\nspaceship-16x16-\nspace-sprites\nfreesound.org", 13, 240, 200, -20);
+        MenuLabel bodyLabel2 = new MenuLabel("youtu.be/DkIuA5ZEZ_U\n\nkenney.nl/assets?q=ui\nopengameart.org/\ncontent/i-are-\nspaceship-16x16-\nspace-sprites\nfreesound.org", 13, 240, 220, -20);
         bodyLabel2.setLayoutX(315);
         bodyLabel2.setLayoutY(112.75);
         creditsSubScene.getPane().getChildren().add(bodyLabel2);

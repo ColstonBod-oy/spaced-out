@@ -5,8 +5,6 @@
  */
 package model;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
