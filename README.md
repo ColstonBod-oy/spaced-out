@@ -3,7 +3,7 @@
 
 ## :memo: About 
 
-**This game is a hybrid of the classic games: Asteroids and Space Invaders.
+**This game is a hybrid of the classic games: Asteroids and Space Invaders.  
 It was made using the JavaFX library inside NetBeans IDE.**
 
 ## :hammer: Usage
@@ -12,7 +12,8 @@ It was made using the JavaFX library inside NetBeans IDE.**
 
 ## :computer: Follow
 
-**See videos showcasing the compiled Jar file of this game and it's development in my Facebook account's Featured Stories:**
+**See videos showcasing the compiled Jar file of this game and it's development  
+in my Facebook account's Featured Stories:**
 
 [![Facebook](https://img.shields.io/badge/colston.bodoy-%231877F2.svg?style=for-the-badge&logo=Facebook&logoColor=white)](https://www.facebook.com/colston.bodoy/)
 
