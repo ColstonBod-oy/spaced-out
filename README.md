@@ -12,10 +12,11 @@ It was made using the JavaFX library inside NetBeans IDE.**
 
 ## :computer: Follow
 
-**See videos showcasing the compiled Jar file of this game and it's development  
-in my Facebook account's Featured Stories:**
+**See videos showcasing the compiled Jar file of this game and its development  
+on my social media accounts:**
 
-[![Facebook](https://img.shields.io/badge/colston.bodoy-%231877F2.svg?style=for-the-badge&logo=Facebook&logoColor=white)](https://www.facebook.com/colston.bodoy/)
+[![Facebook](https://img.shields.io/badge/colston.bodoy-%231877F2.svg?style=for-the-badge&logo=Facebook&logoColor=white)](https://www.facebook.com/colston.bodoy/)  
+[![X](https://img.shields.io/badge/X-%23000000.svg?style=for-the-badge&logo=X&logoColor=white)](https://twitter.com/OyColston)
 
 ## :books: References
 
