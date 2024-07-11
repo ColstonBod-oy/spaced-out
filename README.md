@@ -16,7 +16,7 @@ It was made using the JavaFX library inside NetBeans IDE.**
 on my social media accounts:**
 
 [![Facebook](https://img.shields.io/badge/colston.bodoy-%231877F2.svg?style=for-the-badge&logo=Facebook&logoColor=white)](https://www.facebook.com/colston.bodoy/)  
-[![X](https://img.shields.io/badge/X-%23000000.svg?style=for-the-badge&logo=X&logoColor=white)](https://twitter.com/OyColston)
+[![X](https://img.shields.io/badge/@OyColston-%23000000.svg?style=for-the-badge&logo=X&logoColor=white)](https://twitter.com/OyColston)
 
 ## :books: References
 
